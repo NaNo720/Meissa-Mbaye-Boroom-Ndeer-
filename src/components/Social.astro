@@ -1,0 +1,54 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import { site, whatsappUrl } from '@/data/site';
+import { ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+  /** Affiche le libellé « Suivre Meïssa » devant les icônes. */
+  libelle?: boolean;
+  tone?: 'clair' | 'sombre';
+  class?: string;
+}
+const { lang, libelle = false, tone = 'clair', class: className = '' } = Astro.props;
+
+const noms: Record<keyof typeof site.reseaux, string> = {
+  instagram: 'Instagram',
+  facebook: 'Facebook',
+  youtube: 'YouTube',
+  tiktok: 'TikTok',
+  x: 'X',
+  linkedin: 'LinkedIn',
+  spotify: 'Spotify',
+};
+
+const liens = [
+  ...Object.entries(site.reseaux)
+    .filter(([, url]) => url)
+    .map(([id, url]) => ({ id: id as IconName, url, nom: noms[id as keyof typeof noms] })),
+  { id: 'whatsapp' as IconName, url: whatsappUrl, nom: 'WhatsApp' },
+];
+
+const bord = tone === 'clair' ? 'border-creme/30 text-creme hover:border-creme' : 'border-noir/25 text-noir hover:border-noir';
+---
+
+<div class:list={['flex flex-wrap items-center gap-3', className]}>
+  {libelle && <span class:list={['mr-1 hidden text-xs sm:inline', tone === 'clair' ? 'text-creme/80' : 'text-texte-2']}>{ui.social.suivre[lang]}</span>}
+  <ul class="flex flex-wrap gap-2" role="list">
+    {
+      liens.map((l) => (
+        <li>
+          <a
+            href={l.url}
+            target="_blank"
+            rel="noopener"
+            class:list={['flex size-11 items-center justify-center rounded-full border transition-colors', bord]}
+          >
+            <Icon name={l.id} class="size-4" />
+            <span class="sr-only">{l.nom}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

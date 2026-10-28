@@ -1,0 +1,205 @@
+---
+import Base from '@/layouts/Base.astro';
+import Photo from '@/components/Photo.astro';
+import Icon from '@/components/Icon.astro';
+import { photos } from '@/data/photos';
+import { bokkBaat, kaayWax, livreMethode, publicsPedagogue } from '@/data/pedagogue';
+import { dossierPedagogue } from '@/data/spectacles';
+import { href, type Lang } from '@/i18n';
+
+/**
+ * Meïssa Mbaye pédagogue, organisé autour de deux projets (Nano, 27/10/2026) :
+ * Bokk Baat (professeur de chant) et Kaay Wax (professeur de conte, paroles partagées).
+ * Les autres formations (art oratoire, coaching, parcours de 10 h) suivent.
+ */
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    titre: 'Pédagogue',
+    description:
+      'Meïssa Mbaye pédagogue : Bokk Baat, la voix partagée, ensemble vocal interculturel et chant polyphonique ; Kaay Wax, spectacle de paroles partagées et école de la déclamation.',
+    kicker: 'Professeur en art du récit · Professeur de chant',
+    // Résumé des textes « Spécialiste de la technique vocale africaine » et « L'Arbre à Palabre » (Nano, 27/10/2026).
+    h1: 'Enseigner le chant et le conte',
+    intro:
+      'Depuis plus de 30 ans, en France, en Afrique et aux États-Unis, Meïssa Mbaye transmet l’art vocal des griots : une technique qui convoque toute l’étendue de la voix, des graves de poitrine aux aigus de tête, ouverte à tous les styles. Dans les écoles, avec sa méthode de l’Arbre à Palabre, il fait des enfants qui écoutaient des conteurs à leur tour.',
+    organiser: 'Organiser une formation',
+    dossier: 'Dossier pédagogue (PDF)',
+    sommaire: 'Sur cette page',
+    rubriques: { projets: 'Bokk Baat et Kaay Wax', publics: 'Pour qui ?' },
+    projetsTitre: 'Deux projets',
+    chant: 'Le chant',
+    conte: 'Le conte',
+    decouvrir: 'Découvrir',
+    porteBokk: 'Un ensemble vocal interculturel : chacun apporte une chanson de sa culture, et les chants partagés deviennent un concert polyphonique.',
+    porteKaay: 'Un spectacle de paroles partagées : chacun apporte un texte qui lui est cher, et Meïssa Mbaye les met en scène.',
+    technique: 'La technique vocale africaine',
+    organiserBokk: 'Organiser un atelier Bokk Baat',
+    organiserKaay: 'Participer à Kaay Wax',
+    conteur: 'Le spectacle Génies, pour les écoles et les médiathèques',
+    autresKicker: 'Autres formations',
+    approcheKicker: 'L’approche',
+    formulesTitre: 'Formations et coaching de prise de parole',
+    pourQui: 'Pour qui',
+    parcoursKicker: 'Exemple de parcours',
+    pourQuiTitre: 'Pour qui ?',
+    pourQuiTexte: 'Toute personne ou structure qui doit faire passer un message, en Afrique comme en Europe.',
+    finTitre: 'Organiser une formation',
+    finTexte: 'Bokk Baat et Kaay Wax, formations de chant et de conte. Réponse sous 48 h.',
+    demande: 'Envoyer une demande',
+  },
+  en: {
+    titre: 'Teacher',
+    description:
+      'Meïssa Mbaye as a teacher: Bokk Baat, the shared voice, an intercultural vocal ensemble and polyphonic singing; Kaay Wax, a show of shared words and a school of declamation.',
+    kicker: 'Teacher of the art of storytelling · Singing teacher',
+    h1: 'Teaching song and storytelling',
+    intro:
+      'For more than 30 years, in France, Africa and the United States, Meïssa Mbaye has passed on the vocal art of the griots: a technique that calls on the full range of the voice, from deep chest notes to high head notes, open to every style. In schools, with his Palaver Tree method, he turns children who were listening into storytellers in their own right.',
+    organiser: 'Arrange a training session',
+    dossier: 'Teaching pack (PDF, in French)',
+    sommaire: 'On this page',
+    rubriques: { projets: 'Bokk Baat and Kaay Wax', publics: 'Who is it for?' },
+    projetsTitre: 'Two projects',
+    chant: 'Song',
+    conte: 'Storytelling',
+    decouvrir: 'Discover',
+    porteBokk: 'An intercultural vocal ensemble: everyone brings a song from their culture, and the shared songs become a polyphonic concert.',
+    porteKaay: 'A show of shared words: everyone brings a text they hold dear, and Meïssa Mbaye stages them.',
+    technique: 'African vocal technique',
+    organiserBokk: 'Arrange a Bokk Baat workshop',
+    organiserKaay: 'Join Kaay Wax',
+    conteur: 'The show Génies, for schools and libraries',
+    autresKicker: 'Other training',
+    approcheKicker: 'The approach',
+    formulesTitre: 'Public speaking training and coaching',
+    pourQui: 'For',
+    parcoursKicker: 'Sample programme',
+    pourQuiTitre: 'Who is it for?',
+    pourQuiTexte: 'Any person or organisation that needs to get a message across, in Africa as in Europe.',
+    finTitre: 'Arrange a training session',
+    finTexte: 'Bokk Baat and Kaay Wax, singing and storytelling training. Reply within 48 hours.',
+    demande: 'Send a request',
+  },
+}[lang];
+
+const contact = (offre: string) => `${href(lang, 'contact')}?offre=${offre}`;
+const rubriques = Object.entries(t.rubriques) as [string, string][];
+const portes = [
+  // Couleur propre à chaque projet : terracotta pour le chant (Bokk Baat), bleu pétrole pour le conte (Kaay Wax).
+  { id: 'bokk-baat', nom: bokkBaat.nom, facette: t.chant, sens: bokkBaat.traduction[lang], texte: t.porteBokk, carte: 'border-t-terracotta bg-sable', texteCouleur: 'text-terracotta', bouton: 'bg-terracotta' },
+  // Kaay Wax en bleu pétrole (#1D6A80), fixe dans les deux thèmes (Nano, 28/10/2026).
+  { id: 'kaay-wax', nom: kaayWax.nom, facette: t.conte, sens: `« ${kaayWax.devise[lang]} »`, texte: t.porteKaay, carte: 'border-t-[#1D6A80] bg-[#DCEBEF]', texteCouleur: 'text-[#1D6A80]', bouton: 'bg-[#1D6A80] !text-white' },
+];
+---
+
+<Base lang={lang} title={t.titre} description={t.description}>
+  <!-- En-tête -->
+  <section class="bg-noir text-creme">
+    <div class="container-site grid gap-10 pb-14 pt-12 sm:pt-16 lg:grid-cols-2 lg:items-center">
+      <div>
+        <p class="kicker text-or">{t.kicker}</p>
+        <h1 class="mt-4 text-5xl leading-[1.05] sm:text-6xl">{t.h1}</h1>
+        <p class="mt-5 max-w-xl text-creme/85">{t.intro}</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href={contact('formation')} class="btn btn-or">{t.organiser}</a>
+          {
+            dossierPedagogue && (
+              <a href={dossierPedagogue} download class="btn btn-contour-clair">
+                <Icon name="telecharger" class="size-4" />
+                {t.dossier}
+              </a>
+            )
+          }
+        </div>
+      </div>
+      <Photo photo={photos.conteurInstitutFrancais} lang={lang} sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[3/2] w-full rounded-lg" prioritaire />
+    </div>
+  </section>
+
+  <!-- Sommaire -->
+  <nav aria-label={t.sommaire} class="sticky top-16 z-30 border-b border-bordure bg-creme/95 backdrop-blur">
+    <ul class="container-site flex gap-1 overflow-x-auto py-2 text-sm [scrollbar-width:none]" role="list">
+      {
+        rubriques.map(([id, label]) => (
+          <li class="shrink-0">
+            <a href={`#${id}`} class="inline-flex min-h-11 items-center rounded-full px-4 hover:bg-sable">{label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- Deux projets : une porte par facette, chacune mène à sa page -->
+  <section id="projets" class="container-site scroll-mt-32 py-16 sm:py-20" aria-labelledby="projets-titre">
+    <h2 id="projets-titre" class="text-4xl sm:text-5xl">{t.projetsTitre}</h2>
+    <ul class="mt-10 grid gap-4 md:grid-cols-2" role="list">
+      {
+        portes.map((p) => (
+          <li>
+            <a
+              href={href(lang, `pedagogue/${p.id}`)}
+              class:list={['group flex h-full flex-col rounded-lg border-t-4 p-6 transition-shadow hover:shadow-lg sm:p-8', p.carte]}
+            >
+              <p class:list={['kicker', p.texteCouleur]}>{p.facette}</p>
+              <h3 class:list={['mt-3 text-5xl', p.texteCouleur]}>{p.nom}</h3>
+              <p class="mt-1 font-serif text-xl italic text-texte-2">{p.sens}</p>
+              <p class="mt-4 leading-relaxed text-texte-2">{p.texte}</p>
+              <span class:list={['btn mt-6 self-start text-carte', p.bouton]}>{t.decouvrir} {p.nom} →</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Publics et livre à paraître (frise « Plus de trente ans de transmission » retirée, Nano 27/10/2026) -->
+  <!-- Fond clair : se détache du bandeau final (vert pâle dans le thème vert, terracotta sinon) -->
+  <section id="publics" class="scroll-mt-32 border-t border-bordure" aria-label={t.pourQuiTitre}>
+    <div class="container-site py-16 sm:py-20">
+      <!-- Pour qui ? : les publics en ligne -->
+      <h2 class="text-4xl sm:text-5xl">{t.pourQuiTitre}</h2>
+      <p class="mt-3 text-texte-2">{t.pourQuiTexte}</p>
+      <ul class="mt-6 flex flex-wrap gap-3" role="list">
+        {
+          // Effet au survol : la pastille prend la couleur d'accent et se soulève légèrement.
+          publicsPedagogue.map((p) => (
+            <li class="cursor-default rounded-full border border-bordure bg-carte px-4 py-2 text-sm transition duration-200 hover:border-terracotta hover:bg-terracotta hover:text-carte hover:shadow-md motion-safe:hover:-translate-y-0.5">
+              {p[lang]}
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Livre à paraître, juste en dessous -->
+      <!-- Fond #DCEFE8 demandé par Nano (27/10/2026), dans les deux thèmes -->
+      <div class="mt-12 grid gap-4 rounded-lg bg-[#DCEFE8] p-6 text-noir sm:p-8 md:grid-cols-[1fr_2fr] md:items-center">
+        <div>
+          <p class="kicker text-terracotta">{livreMethode.kicker[lang]}</p>
+          <p class="mt-3 font-serif text-3xl leading-snug" lang="fr">{livreMethode.titre}</p>
+        </div>
+        <p class="text-texte-2">{livreMethode.texte[lang]}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- « Autres formations » et « Exemple de parcours » retirés (Nano, 27/10/2026) -->
+
+  <!-- Bandeau final, comme sur les autres pages -->
+  <section class="zone-pale bg-terracotta text-carte" aria-labelledby="fin-titre">
+    <div class="container-site grid gap-6 py-14 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <h2 id="fin-titre" class="text-4xl sm:text-5xl">{t.finTitre}</h2>
+        <p class="mt-3 text-sm text-carte/85">{t.finTexte}</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href={contact('formation')} class="btn btn-clair">{t.demande}</a>
+        {dossierPedagogue && <a href={dossierPedagogue} download class="btn btn-contour-clair">{t.dossier}</a>}
+      </div>
+    </div>
+  </section>
+</Base>

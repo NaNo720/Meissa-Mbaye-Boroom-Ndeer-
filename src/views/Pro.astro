@@ -1,0 +1,196 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
+import Galerie from '@/components/Galerie.astro';
+import { documentsPro } from '@/data/pro';
+import { citations, egalementDans, enLigne } from '@/data/artiste';
+import { photos } from '@/data/photos';
+import { site, mailtoUrl, whatsappUrl } from '@/data/site';
+import { href, ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    titre: 'Espace pro',
+    description:
+      'EPK de Meïssa Mbaye pour les programmateurs et la presse : dossiers de presse, fiches techniques, revue de presse, vidéos et contacts de réservation.',
+    kicker: 'EPK · Programmateurs et presse',
+    h1: 'Tout pour programmer Meïssa',
+    intro:
+      'Chanteur-poète et conteur sénégalais, Meïssa Mbaye met en musique Senghor, Valéry et les poètes de la diaspora, et fait vivre les génies du Sénégal sur scène. Deux spectacles, chacun pouvant se prolonger par un atelier d’art oratoire africain.',
+    chiffres: [
+      { valeur: 'Dakar, 1959', detail: 'Lignée royale et lignée de griots' },
+      { valeur: 'Près de 40 ans', detail: 'De scène, en Afrique, en Europe et aux Amériques' },
+      { valeur: 'Prix IFCIC', detail: 'de l’UNESCO, 2005' },
+      { valeur: 'Prince des poètes', detail: 'Titre reçu de sa famille' },
+    ],
+    documents: 'Documents',
+    demander: 'Demander',
+    voir: 'Voir',
+    presse: 'Revue de presse',
+    egalement: 'Également dans :',
+    enLigne: 'Écouter, voir, lire',
+    contactTitre: 'Booking',
+    contactTexte: 'France, Belgique et international. Réponse sous 48 h.',
+    formulaire: 'Envoyer une demande',
+    objetDemande: 'Demande de documents presse',
+  },
+  en: {
+    titre: 'Press & pro',
+    description:
+      'Meïssa Mbaye’s EPK for programmers and press: press kits, technical riders, press review, videos and booking contacts.',
+    kicker: 'EPK · Programmers and press',
+    h1: 'Everything you need to book Meïssa',
+    intro:
+      'A Senegalese singer-poet and storyteller, Meïssa Mbaye sets Senghor, Valéry and the poets of the diaspora to music, and brings the spirits of Senegal to life on stage. Two shows, each of which can be extended with an African oratory workshop.',
+    chiffres: [
+      { valeur: 'Dakar, 1959', detail: 'Royal and griot lineage' },
+      { valeur: 'Nearly 40 years', detail: 'On stage in Africa, Europe and the Americas' },
+      { valeur: 'IFCIC Prize', detail: 'UNESCO, 2005' },
+      { valeur: 'Prince of Poets', detail: 'A title given by his family' },
+    ],
+    documents: 'Documents',
+    demander: 'Request',
+    voir: 'View',
+    presse: 'Press review',
+    egalement: 'Also featured in:',
+    enLigne: 'Listen, watch, read',
+    contactTitre: 'Booking',
+    contactTexte: 'France, Belgium and worldwide. Reply within 48 hours.',
+    formulaire: 'Send a request',
+    objetDemande: 'Press materials request',
+  },
+}[lang];
+
+const mailDemande = `${mailtoUrl}?subject=${encodeURIComponent(t.objetDemande)}`;
+---
+
+<Base lang={lang} title={t.titre} description={t.description}>
+  <section class="zone-pale bg-indigo text-carte">
+    <div class="container-site grid gap-10 pb-14 pt-12 sm:pt-16 lg:grid-cols-[3fr_2fr] lg:items-end">
+      <div>
+        <p class="kicker text-or">{t.kicker}</p>
+        <h1 class="mt-4 text-5xl sm:text-7xl">{t.h1}</h1>
+        <p class="mt-5 max-w-xl text-carte/85">{t.intro}</p>
+      </div>
+      <Photo photo={photos.sceneBoubouJaune} lang={lang} sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[16/10] w-full rounded-lg" prioritaire />
+    </div>
+  </section>
+
+  <section class="border-b border-bordure bg-carte">
+    <dl class="container-site grid grid-cols-2 lg:grid-cols-4">
+      {
+        t.chiffres.map((c) => (
+          <div class="border-bordure py-6 pr-4 [&:nth-child(n+3)]:border-t lg:border-l lg:pl-6 lg:first:border-l-0 lg:first:pl-0 lg:[&:nth-child(n+3)]:border-t-0">
+            <dt class="font-serif text-2xl">{c.valeur}</dt>
+            <dd class="mt-1 text-xs text-texte-2">{c.detail}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="container-site py-16 sm:py-20" aria-labelledby="docs-titre">
+    <h2 id="docs-titre" class="text-4xl sm:text-5xl">{t.documents}</h2>
+    <div class="mt-10 grid gap-12">
+      {
+        documentsPro.map((g) => (
+          <div>
+            <h3 class="text-3xl">{g.groupe[lang]}</h3>
+            <ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
+              {g.documents.map((d) => (
+                <li class="carte flex items-center justify-between gap-4 p-5">
+                  <div>
+                    <p class="font-medium">{d.titre[lang]}</p>
+                    <p class="text-xs text-texte-2">{d.detail[lang]}</p>
+                  </div>
+                  {d.ancre ? (
+                    <a href={d.ancre} class="btn btn-contour-sombre shrink-0 px-4 text-xs">
+                      {t.voir} <span aria-hidden="true">↓</span>
+                      <span class="sr-only"> : {d.titre[lang]}</span>
+                    </a>
+                  ) : d.fichier ? (
+                    <a href={d.fichier} download class="flex size-11 shrink-0 items-center justify-center rounded-full bg-noir text-creme">
+                      <Icon name="telecharger" />
+                      <span class="sr-only">{lang === 'fr' ? 'Télécharger' : 'Download'} : {d.titre[lang]}</span>
+                    </a>
+                  ) : d.surDemande ? (
+                    <a href={mailDemande} class="btn btn-contour-sombre shrink-0 px-4 text-xs">
+                      {t.demander}
+                      <span class="sr-only"> : {d.titre[lang]}</span>
+                    </a>
+                  ) : (
+                    <span class="shrink-0 rounded-full bg-sable px-3 py-1 text-xs text-texte-2">{ui.commun.bientot[lang]}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <div class="container-site pb-16 sm:pb-20">
+    <Galerie lang={lang} mode="apercu" />
+  </div>
+
+  <section id="presse" class="scroll-mt-20 bg-sable" aria-labelledby="presse-titre">
+    <div class="container-site py-16 sm:py-20">
+      <h2 id="presse-titre" class="text-4xl sm:text-5xl">{t.presse}</h2>
+      <ul class="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3" role="list">
+        {
+          citations.map((c) => (
+            <li>
+              <figure class="border-t border-noir/30 pt-4">
+                <blockquote class="font-serif text-2xl leading-snug" lang={c.lang ?? 'fr'}>« {c.texte} »</blockquote>
+                <figcaption class="mt-2 text-xs text-texte-2">{c.media}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-10 max-w-3xl text-sm text-texte-2"><span class="font-medium text-noir">{t.egalement}</span> {egalementDans}</p>
+    </div>
+  </section>
+
+  <section class="container-site py-16 sm:py-20" aria-labelledby="enligne-titre">
+    <h2 id="enligne-titre" class="text-4xl sm:text-5xl">{t.enLigne}</h2>
+    <ul class="mt-8 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3" role="list">
+      {
+        enLigne.map((l) => (
+          <li class="border-t border-bordure">
+            <a href={l.lien} target="_blank" rel="noopener" class="group flex items-start justify-between gap-4 py-4">
+              <span>
+                <span class="block font-medium group-hover:underline">{l.titre}</span>
+                <span class="block text-xs text-texte-2">{l.detail[lang]}</span>
+              </span>
+              <span aria-hidden="true" class="text-terracotta">↗</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Bandeau de réservation avant le pied de page, comme sur les pages Biographie, Conteur et Tournée -->
+  <section class="zone-pale bg-terracotta text-carte" aria-labelledby="booking-titre">
+    <div class="container-site grid gap-6 py-14 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <h2 id="booking-titre" class="text-4xl sm:text-5xl">{t.contactTitre}</h2>
+        <p class="mt-2 text-carte/85">{t.contactTexte}</p>
+        <p class="mt-4 text-sm">
+          <a href={mailtoUrl} class="lien break-all">{site.bookingEmail}</a>
+          <span class="mx-2 opacity-60" aria-hidden="true">·</span>
+          <a href={whatsappUrl} target="_blank" rel="noopener" class="lien">WhatsApp {site.whatsapp.affichage}</a>
+        </p>
+      </div>
+      <a href={href(lang, 'contact')} class="btn btn-clair self-start md:self-auto">{t.formulaire}</a>
+    </div>
+  </section>
+</Base>

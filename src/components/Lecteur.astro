@@ -1,0 +1,125 @@
+---
+import Icon from './Icon.astro';
+import { ui, type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+
+/**
+ * Lecteur audio : lecture/pause, barre de progression déplaçable et minutage.
+ * Un seul lecteur joue à la fois sur la page. Rien n'est téléchargé avant le clic (preload="none").
+ * Un lien ou bouton portant data-lecteur-lancer="<id>" ailleurs dans la page lance ce lecteur.
+ */
+interface Props {
+  lang: Lang;
+  titre: string;
+  detail: string;
+  fichier: string;
+  /** Durée en secondes, affichée avant le chargement du fichier. */
+  duree: number;
+  id?: string;
+  accent?: 'noir' | 'indigo' | 'terracotta' | 'petrole';
+  class?: string;
+}
+const { lang, titre, detail, fichier, duree, id, accent = 'noir', class: className = '' } = Astro.props;
+
+const minutage = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+const couleurs = {
+  noir: { bouton: 'bg-noir', barre: 'accent-noir' },
+  indigo: { bouton: 'bg-indigo', barre: 'accent-indigo' },
+  terracotta: { bouton: 'bg-terracotta', barre: 'accent-terracotta' },
+  // Bleu pétrole fixe (couleur du conte, Nano 28/10/2026), identique dans les deux thèmes.
+  petrole: { bouton: 'bg-[#1D6A80] !text-white', barre: 'accent-[#1D6A80]' },
+};
+const position = lang === 'fr' ? 'Position de lecture' : 'Playback position';
+---
+
+<div id={id} class:list={['carte scroll-mt-32 p-4', className]} data-lecteur>
+  <div class="flex items-center gap-4">
+    <button
+      type="button"
+      class:list={['flex size-11 shrink-0 items-center justify-center rounded-full text-creme', couleurs[accent].bouton]}
+      aria-pressed="false"
+      data-lecteur-bouton
+    >
+      <span data-icone-lecture><Icon name="lecture" class="size-4" /></span>
+      <span data-icone-pause hidden><Icon name="pause" class="size-4" /></span>
+      <span class="sr-only">{ui.commun.ecouter[lang]} : {titre}</span>
+    </button>
+    <div class="min-w-0">
+      <p class="text-sm font-medium">{titre}</p>
+      <p class="text-xs text-texte-2" set:html={fmt(detail)} />
+    </div>
+  </div>
+  <div class="mt-3 flex items-center gap-3 text-xs tabular-nums text-texte-2">
+    <span data-lecteur-ecoule>0:00</span>
+    <input
+      type="range"
+      min="0"
+      max={Math.round(duree)}
+      step="1"
+      value="0"
+      aria-label={`${position} : ${titre}`}
+      class:list={['h-11 w-full cursor-pointer', couleurs[accent].barre]}
+      data-lecteur-barre
+    />
+    <span data-lecteur-total>{minutage(duree)}</span>
+  </div>
+  <audio src={fichier} preload="none"></audio>
+</div>
+
+<script>
+  const minutage = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+  document.querySelectorAll<HTMLElement>('[data-lecteur]').forEach((lecteur) => {
+    const audio = lecteur.querySelector('audio')!;
+    const bouton = lecteur.querySelector<HTMLButtonElement>('[data-lecteur-bouton]')!;
+    const barre = lecteur.querySelector<HTMLInputElement>('[data-lecteur-barre]')!;
+    const ecoule = lecteur.querySelector<HTMLElement>('[data-lecteur-ecoule]')!;
+    const total = lecteur.querySelector<HTMLElement>('[data-lecteur-total]')!;
+    let glisse = false;
+
+    const etat = (joue: boolean) => {
+      bouton.setAttribute('aria-pressed', String(joue));
+      bouton.querySelector<HTMLElement>('[data-icone-lecture]')!.hidden = joue;
+      bouton.querySelector<HTMLElement>('[data-icone-pause]')!.hidden = !joue;
+    };
+    const lire = () => {
+      // Un seul lecteur à la fois sur la page.
+      document.querySelectorAll('audio').forEach((a) => a !== audio && a.pause());
+      audio.play();
+    };
+
+    bouton.addEventListener('click', () => (audio.paused ? lire() : audio.pause()));
+    audio.addEventListener('play', () => etat(true));
+    audio.addEventListener('pause', () => etat(false));
+    audio.addEventListener('ended', () => etat(false));
+    audio.addEventListener('loadedmetadata', () => {
+      barre.max = String(Math.floor(audio.duration));
+      total.textContent = minutage(audio.duration);
+    });
+    audio.addEventListener('timeupdate', () => {
+      if (glisse) return;
+      barre.value = String(Math.floor(audio.currentTime));
+      ecoule.textContent = minutage(audio.currentTime);
+    });
+    barre.addEventListener('input', () => {
+      glisse = true;
+      ecoule.textContent = minutage(Number(barre.value));
+    });
+    barre.addEventListener('change', () => {
+      audio.currentTime = Number(barre.value);
+      glisse = false;
+    });
+
+    // Bouton « Écouter » ailleurs dans la page : descend jusqu'au lecteur et lance la lecture.
+    if (lecteur.id) {
+      document.querySelectorAll<HTMLElement>(`[data-lecteur-lancer="${lecteur.id}"]`).forEach((lanceur) =>
+        lanceur.addEventListener('click', (e) => {
+          e.preventDefault();
+          lecteur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          lire();
+          bouton.focus({ preventScroll: true });
+        }),
+      );
+    }
+  });
+</script>

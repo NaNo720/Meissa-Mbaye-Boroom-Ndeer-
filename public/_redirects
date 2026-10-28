@@ -1,0 +1,7 @@
+# Redirections Netlify (301 = déplacement définitif, conservé par Google).
+# Page « L'artiste » fusionnée dans Borom Ndeer.
+/artiste      /borom-ndeer#parcours      301!
+/en/artiste   /en/borom-ndeer#parcours   301!
+# Kaay Wox renommé Kaay Wax.
+/pedagogue/kaay-wox      /pedagogue/kaay-wax      301!
+/en/pedagogue/kaay-wox   /en/pedagogue/kaay-wax   301!

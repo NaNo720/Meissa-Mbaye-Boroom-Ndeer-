@@ -1,0 +1,32 @@
+---
+import { accent, spectacles, type OffreId } from '@/data/spectacles';
+import { href, ui, type Lang } from '@/i18n';
+
+/** Bandeau de conversion en bas des pages spectacle. */
+interface Props {
+  lang: Lang;
+  offre: OffreId;
+  titre: string;
+  bouton: string;
+}
+const { lang, offre, titre, bouton } = Astro.props;
+const s = spectacles[offre];
+// Un document pas encore disponible n'affiche aucun bouton.
+const docs = [
+  { label: ui.commun.dossierPresse[lang], url: s.dossierPresse },
+  { label: ui.commun.ficheTechnique[lang], url: s.ficheTechnique },
+].filter((d) => d.url);
+---
+
+<section class:list={[accent[offre].fond, 'text-carte', 'zone-pale']} aria-labelledby="programmer-titre">
+  <div class="container-site grid gap-8 py-14 md:grid-cols-2 md:items-center">
+    <div>
+      <h2 id="programmer-titre" class="text-4xl sm:text-5xl">{titre}</h2>
+      <p class="mt-3 text-sm text-carte/85">{ui.commun.reponse48[lang]}</p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <a href={`${href(lang, 'contact')}?offre=${offre}`} class="btn btn-clair">{bouton}</a>
+      {docs.map((d) => <a href={d.url} class="btn btn-contour-clair" download>{d.label}</a>)}
+    </div>
+  </div>
+</section>

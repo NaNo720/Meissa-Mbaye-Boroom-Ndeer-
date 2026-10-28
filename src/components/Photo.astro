@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import type { Photo } from '@/data/photos';
+import type { Lang } from '@/i18n';
+
+/** Photo optimisée (WebP, plusieurs tailles) avec texte alternatif dans la langue de la page. */
+interface Props {
+  photo: Photo;
+  lang: Lang;
+  sizes: string;
+  class?: string;
+  /** true pour une image visible au chargement (au-dessus de la ligne de flottaison). */
+  prioritaire?: boolean;
+}
+const { photo, lang, sizes, class: className = '', prioritaire = false } = Astro.props;
+const largeurs = [400, 800, 1200].filter((w) => w <= photo.src.width);
+if (!largeurs.includes(photo.src.width) && photo.src.width < 1200) largeurs.push(photo.src.width);
+---
+
+<Image
+  src={photo.src}
+  alt={photo.alt[lang]}
+  widths={largeurs}
+  sizes={sizes}
+  format="webp"
+  loading={prioritaire ? 'eager' : 'lazy'}
+  class:list={['object-cover', className]}
+/>

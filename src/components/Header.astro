@@ -1,0 +1,118 @@
+---
+import Icon from './Icon.astro';
+import { href, slugOf, ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const slug = slugOf(Astro.url.pathname);
+// La page Galerie fait partie de l'Espace pro ; les pages projets (Bokk Baat, Kaay Wax) de la page Pédagogue.
+const rubrique = slug === 'galerie' ? 'pro' : slug.startsWith('pedagogue/') ? 'pedagogue' : slug;
+
+const liens = [
+  { slug: 'borom-ndeer', label: ui.nav.biographie[lang] },
+  { slug: 'conteur', label: ui.nav.conteur[lang] },
+  { slug: 'pedagogue', label: ui.nav.pedagogue[lang] },
+  { slug: 'tournee', label: ui.nav.tournee[lang] },
+  { slug: 'pro', label: ui.nav.pro[lang] },
+];
+---
+
+<header class="sticky top-0 z-40 bg-noir text-creme">
+  <div class="container-site flex h-16 items-center justify-between gap-6">
+    <a href={href(lang)} class="-my-1 shrink-0 py-1">
+      <!--
+        Logotype « Meissa Mbaye / BOROOM NDEER » (version 2, 23/10/2026) dessiné dans la couleur des boutons (--color-or) :
+        la forme vient de logotype-v2-clair.webp (source : medias-sources/logos) utilisée comme masque,
+        la couleur suit donc automatiquement le thème.
+      -->
+      <span role="img" aria-label={ui.nav.accueil[lang]} class="logo-site block aspect-[299/73] h-9 bg-or lg:h-11"></span>
+    </a>
+
+    <nav aria-label={ui.nav.principal[lang]} class="hidden lg:block">
+      <ul class="flex items-center gap-7 text-sm" role="list">
+        {
+          liens.map((l) => (
+            <li>
+              <a
+                href={href(lang, l.slug)}
+                aria-current={rubrique === l.slug ? 'page' : undefined}
+                class="py-2 transition-colors hover:text-or aria-[current=page]:text-or"
+              >
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <a href={href(lang, 'contact')} class="btn btn-or hidden sm:inline-flex">{ui.nav.reserver[lang]}</a>
+      <div class="hidden text-xs lg:block" role="group" aria-label={ui.nav.langue[lang]}>
+        <a href={href('fr', slug)} hreflang="fr" lang="fr" aria-current={lang === 'fr' ? 'true' : undefined} class="p-1 aria-[current=true]:underline aria-[current=true]:underline-offset-4">FR</a>
+        <span aria-hidden="true">·</span>
+        <a href={href('en', slug)} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined} class="p-1 aria-[current=true]:underline aria-[current=true]:underline-offset-4">EN</a>
+      </div>
+      <button
+        type="button"
+        class="-mr-2 flex size-11 items-center justify-center lg:hidden"
+        aria-expanded="false"
+        aria-controls="menu-mobile"
+        data-menu-bouton
+        data-label-ouvrir={ui.nav.menu[lang]}
+        data-label-fermer={ui.nav.fermer[lang]}
+      >
+        <span data-icone-ouvrir><Icon name="menu" class="size-6" /></span>
+        <span data-icone-fermer hidden><Icon name="fermer" class="size-6" /></span>
+        <span class="sr-only" data-menu-label>{ui.nav.menu[lang]}</span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="menu-mobile" aria-label={ui.nav.principal[lang]} class="border-t border-creme/10 lg:hidden" hidden>
+    <ul class="container-site flex flex-col py-4" role="list">
+      {
+        liens.map((l) => (
+          <li>
+            <a
+              href={href(lang, l.slug)}
+              aria-current={rubrique === l.slug ? 'page' : undefined}
+              class="block py-3 font-serif text-2xl aria-[current=page]:text-or"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="mt-4 flex items-center gap-4 text-sm">
+        <a href={href('fr', slug)} hreflang="fr" lang="fr" class:list={['py-2', lang === 'fr' && 'underline underline-offset-4']}>Français</a>
+        <a href={href('en', slug)} hreflang="en" lang="en" class:list={['py-2', lang === 'en' && 'underline underline-offset-4']}>English</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const bouton = document.querySelector<HTMLButtonElement>('[data-menu-bouton]');
+  const menu = document.getElementById('menu-mobile');
+  if (bouton && menu) {
+    const basculer = (ouvert: boolean) => {
+      bouton.setAttribute('aria-expanded', String(ouvert));
+      menu.hidden = !ouvert;
+      bouton.querySelector<HTMLElement>('[data-icone-ouvrir]')!.hidden = ouvert;
+      bouton.querySelector<HTMLElement>('[data-icone-fermer]')!.hidden = !ouvert;
+      bouton.querySelector('[data-menu-label]')!.textContent = ouvert
+        ? bouton.dataset.labelFermer!
+        : bouton.dataset.labelOuvrir!;
+    };
+    bouton.addEventListener('click', () => basculer(bouton.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        basculer(false);
+        bouton.focus();
+      }
+    });
+  }
+</script>

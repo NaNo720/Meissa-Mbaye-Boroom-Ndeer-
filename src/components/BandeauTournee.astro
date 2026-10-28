@@ -1,0 +1,30 @@
+---
+import { href, type Lang } from '@/i18n';
+
+/**
+ * Annonce de la présence de Meïssa en France (medias-sources/Word/Génies — Dossier de diffusion.docx).
+ * À retirer ou à mettre à jour une fois la tournée 2027 bouclée.
+ */
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    texte: 'Meïssa Mbaye est en France à partir de novembre 2026 et prépare sa tournée 2027 en France et en Belgique.',
+    lien: 'Programmer une date',
+  },
+  en: {
+    texte: 'Meïssa Mbaye is in France from November 2026 and is preparing his 2027 tour of France and Belgium.',
+    lien: 'Book a date',
+  },
+}[lang];
+---
+
+<aside class="bg-or text-noir">
+  <div class="container-site flex flex-col gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <p class="font-medium">{t.texte}</p>
+    <a href={href(lang, 'contact')} class="lien shrink-0 py-1 font-semibold">{t.lien} →</a>
+  </div>
+</aside>

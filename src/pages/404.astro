@@ -1,0 +1,16 @@
+---
+import Base from '@/layouts/Base.astro';
+import { href } from '@/i18n';
+---
+
+<Base lang="fr" title="Page introuvable" description="Cette page n'existe pas ou a été déplacée.">
+  <section class="container-site py-24 sm:py-32">
+    <p class="kicker text-terracotta">404</p>
+    <h1 class="mt-4 text-5xl sm:text-6xl">Cette page n'existe pas.</h1>
+    <p class="mt-4 text-texte-2" lang="en">This page does not exist.</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href={href('fr')} class="btn btn-or">Retour à l'accueil</a>
+      <a href={href('en')} class="btn btn-contour-sombre" lang="en">Back to home</a>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,279 @@
+---
+import { statSync } from 'node:fs';
+import path from 'node:path';
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { categoriesGalerie, creditGalerie, parLot, photosGalerie, selectionApercu, zipsGalerie } from '@/data/galerie';
+import { mailtoUrl } from '@/data/site';
+import { href, type Lang } from '@/i18n';
+
+/**
+ * Galerie photos, en deux modes :
+ * - « apercu » (Espace pro) : 8 photos choisies et un lien vers la page Galerie ;
+ * - « complete » (page /galerie) : filtres, affichage par lots avec « Afficher plus », une archive ZIP par catégorie.
+ * Agrandissement dans une boîte de dialogue (flèches, Échap) avec téléchargement.
+ * Sans JavaScript, toutes les photos restent visibles et chaque miniature ouvre la photo.
+ */
+interface Props {
+  lang: Lang;
+  mode: 'apercu' | 'complete';
+}
+const { lang, mode } = Astro.props;
+
+const t = {
+  fr: {
+    titre: 'Galerie photos',
+    intro: 'Photos libres d’usage pour la presse et la promotion des spectacles de Meïssa Mbaye, avec mention du crédit.',
+    hd: 'Pour une impression (affiche, programme), des fichiers haute définition sont disponibles sur demande.',
+    demanderHd: 'Demander les fichiers HD',
+    objetHd: 'Demande de photos haute définition',
+    voirTout: 'Voir toute la galerie',
+    toutes: 'Toutes',
+    filtre: 'Filtrer les photos',
+    zips: 'Télécharger par catégorie (ZIP)',
+    photos: 'photos',
+    plus: 'Afficher plus de photos',
+    agrandir: 'Agrandir',
+    telecharger: 'Télécharger',
+    precedente: 'Photo précédente',
+    suivante: 'Photo suivante',
+    fermer: 'Fermer',
+  },
+  en: {
+    titre: 'Photo gallery',
+    intro: 'Photos free to use for press and for promoting Meïssa Mbaye’s shows, with photo credit.',
+    hd: 'For print (posters, programmes), high-resolution files are available on request.',
+    demanderHd: 'Request HD files',
+    objetHd: 'High-resolution photos request',
+    voirTout: 'See the full gallery',
+    toutes: 'All',
+    filtre: 'Filter photos',
+    zips: 'Download by category (ZIP)',
+    photos: 'photos',
+    plus: 'Show more photos',
+    agrandir: 'Enlarge',
+    telecharger: 'Download',
+    precedente: 'Previous photo',
+    suivante: 'Next photo',
+    fermer: 'Close',
+  },
+}[lang];
+
+const photos =
+  mode === 'apercu'
+    ? selectionApercu.map((id) => photosGalerie.find((p) => p.id === id)!).filter(Boolean)
+    : photosGalerie;
+
+const credit = creditGalerie[lang];
+const mailHd = `${mailtoUrl}?subject=${encodeURIComponent(t.objetHd)}`;
+const nombre = new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: 1 });
+const archives = categoriesGalerie.map((c) => ({
+  ...c,
+  url: zipsGalerie[c.id],
+  total: photosGalerie.filter((p) => p.categorie === c.id).length,
+  taille: nombre.format(statSync(path.join(process.cwd(), 'public', zipsGalerie[c.id])).size / 1024 / 1024),
+}));
+---
+
+<section id="galerie" class="scroll-mt-20" aria-labelledby="galerie-titre" data-galerie data-par-lot={mode === 'complete' ? parLot : 0}>
+  <div class="flex flex-wrap items-end justify-between gap-6">
+    <div class="max-w-2xl">
+      <h2 id="galerie-titre" class:list={['text-4xl sm:text-5xl', mode === 'complete' && 'sr-only']}>{t.titre}</h2>
+      <p class:list={['text-texte-2', mode === 'apercu' && 'mt-3']}>{t.intro}</p>
+      <p class="mt-2 text-sm text-texte-2">
+        {t.hd} <a href={mailHd} class="lien text-terracotta">{t.demanderHd}</a>
+      </p>
+    </div>
+    {
+      mode === 'apercu' && (
+        <a href={href(lang, 'galerie')} class="btn btn-noir">
+          {t.voirTout} ({photosGalerie.length}) <span aria-hidden="true">→</span>
+        </a>
+      )
+    }
+  </div>
+
+  {
+    mode === 'complete' && (
+      <div class="mt-8 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div class="flex flex-wrap gap-2" role="group" aria-label={t.filtre} data-galerie-filtres hidden>
+          <button type="button" class="btn btn-contour-sombre aria-pressed:bg-noir aria-pressed:text-creme" aria-pressed="true" data-filtre="toutes">
+            {t.toutes} <span class="text-xs opacity-70">{photosGalerie.length}</span>
+          </button>
+          {archives.map((c) => (
+            <button type="button" class="btn btn-contour-sombre aria-pressed:bg-noir aria-pressed:text-creme" aria-pressed="false" data-filtre={c.id}>
+              {c.label[lang]} <span class="text-xs opacity-70">{c.total}</span>
+            </button>
+          ))}
+        </div>
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wider text-texte-2">{t.zips}</p>
+          <ul class="mt-2 flex flex-wrap gap-2" role="list">
+            {archives.map((c) => (
+              <li>
+                <a href={c.url} download class="btn btn-contour-sombre px-4 text-xs">
+                  <Icon name="telecharger" class="size-4" />
+                  {c.label[lang]}
+                  <span class="text-texte-2">· {c.taille} {lang === 'fr' ? 'Mo' : 'MB'}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+
+  <ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4" role="list">
+    {
+      photos.map((p) => (
+        <li data-categorie={p.categorie}>
+          <a
+            href={p.telechargement}
+            class="group relative block overflow-hidden rounded-lg bg-sable-fonce/60"
+            data-grande={p.telechargement}
+            data-alt={p.alt[lang]}
+          >
+            <Image
+              src={p.src}
+              alt={p.alt[lang]}
+              widths={[300, 600]}
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+              format="webp"
+              loading="lazy"
+              class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <span class="sr-only">{t.agrandir}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    mode === 'complete' && (
+      <div class="mt-8 text-center">
+        <button type="button" class="btn btn-contour-sombre" data-galerie-plus hidden>
+          {t.plus} <span class="text-xs text-texte-2" data-galerie-reste></span>
+        </button>
+      </div>
+    )
+  }
+
+  <!-- Agrandissement -->
+  <dialog
+    class="m-auto max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-noir/95 open:flex open:h-dvh open:items-center open:justify-center"
+    aria-label={t.titre}
+    data-galerie-dialog
+  >
+    <figure class="flex max-h-dvh w-full flex-col items-center px-4 py-16 sm:px-20">
+      <img src="" alt="" class="max-h-[75dvh] w-auto max-w-full rounded-lg object-contain" data-galerie-image />
+      <figcaption class="mt-4 flex w-full max-w-3xl flex-col items-center gap-3 text-center text-sm text-creme sm:flex-row sm:justify-between sm:text-left">
+        <span>
+          <span data-galerie-legende></span>
+          <span class="block text-xs text-creme/70">{credit} · <span data-galerie-position></span></span>
+        </span>
+        <a href="" download class="btn btn-or shrink-0" data-galerie-telecharger>
+          <Icon name="telecharger" class="size-4" />
+          {t.telecharger}
+        </a>
+      </figcaption>
+    </figure>
+    <button type="button" class="absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-creme/10 text-creme hover:bg-creme/20" data-galerie-fermer>
+      <Icon name="fermer" class="size-6" />
+      <span class="sr-only">{t.fermer}</span>
+    </button>
+    <button type="button" class="absolute left-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-creme/10 text-2xl text-creme hover:bg-creme/20 sm:left-6" data-galerie-precedente>
+      <span aria-hidden="true">‹</span>
+      <span class="sr-only">{t.precedente}</span>
+    </button>
+    <button type="button" class="absolute right-2 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-creme/10 text-2xl text-creme hover:bg-creme/20 sm:right-6" data-galerie-suivante>
+      <span aria-hidden="true">›</span>
+      <span class="sr-only">{t.suivante}</span>
+    </button>
+  </dialog>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-galerie]').forEach((galerie) => {
+    const elements = [...galerie.querySelectorAll<HTMLLIElement>('li[data-categorie]')];
+    const lien = (li: HTMLLIElement) => li.querySelector<HTMLAnchorElement>('a[data-grande]')!;
+    const dialog = galerie.querySelector<HTMLDialogElement>('[data-galerie-dialog]')!;
+    const image = dialog.querySelector<HTMLImageElement>('[data-galerie-image]')!;
+    const legende = dialog.querySelector<HTMLElement>('[data-galerie-legende]')!;
+    const position = dialog.querySelector<HTMLElement>('[data-galerie-position]')!;
+    const telecharger = dialog.querySelector<HTMLAnchorElement>('[data-galerie-telecharger]')!;
+    const parLot = Number(galerie.dataset.parLot) || 0;
+    let filtre = 'toutes';
+    let affichees = parLot;
+    let liste: HTMLLIElement[] = [];
+    let courant = 0;
+    let declencheur: HTMLElement | null = null;
+
+    // Photos du filtre actif, puis seules les `affichees` premières sont visibles (lots).
+    const correspond = (li: HTMLLIElement) => filtre === 'toutes' || li.dataset.categorie === filtre;
+    const plus = galerie.querySelector<HTMLButtonElement>('[data-galerie-plus]');
+    const reste = galerie.querySelector<HTMLElement>('[data-galerie-reste]');
+    const rafraichir = () => {
+      const filtrees = elements.filter(correspond);
+      elements.forEach((li) => (li.hidden = !correspond(li)));
+      if (parLot) filtrees.forEach((li, i) => (li.hidden = i >= affichees));
+      if (plus && reste) {
+        const restantes = filtrees.length - affichees;
+        plus.hidden = !parLot || restantes <= 0;
+        reste.textContent = `(${Math.max(restantes, 0)})`;
+      }
+    };
+
+    const filtres = galerie.querySelector<HTMLElement>('[data-galerie-filtres]');
+    if (filtres) {
+      filtres.hidden = false;
+      filtres.querySelectorAll<HTMLButtonElement>('[data-filtre]').forEach((bouton) => {
+        bouton.addEventListener('click', () => {
+          filtres.querySelectorAll('[data-filtre]').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+          filtre = bouton.dataset.filtre!;
+          affichees = parLot;
+          rafraichir();
+        });
+      });
+    }
+    plus?.addEventListener('click', () => {
+      const premiereNouvelle = elements.filter(correspond)[affichees];
+      affichees += parLot;
+      rafraichir();
+      if (premiereNouvelle) lien(premiereNouvelle).focus();
+    });
+    rafraichir();
+
+    // L'agrandissement parcourt toutes les photos du filtre actif, même celles pas encore affichées.
+    const afficher = (index: number) => {
+      courant = (index + liste.length) % liste.length;
+      const a = lien(liste[courant]);
+      image.src = a.dataset.grande!;
+      image.alt = a.dataset.alt!;
+      legende.textContent = a.dataset.alt!;
+      position.textContent = `${courant + 1} / ${liste.length}`;
+      telecharger.href = a.dataset.grande!;
+    };
+    elements.forEach((li) =>
+      lien(li).addEventListener('click', (e) => {
+        e.preventDefault();
+        declencheur = lien(li);
+        liste = elements.filter(correspond);
+        afficher(liste.indexOf(li));
+        dialog.showModal();
+      }),
+    );
+    dialog.querySelector('[data-galerie-precedente]')!.addEventListener('click', () => afficher(courant - 1));
+    dialog.querySelector('[data-galerie-suivante]')!.addEventListener('click', () => afficher(courant + 1));
+    dialog.querySelector('[data-galerie-fermer]')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') afficher(courant - 1);
+      if (e.key === 'ArrowRight') afficher(courant + 1);
+    });
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog || (e.target as HTMLElement).tagName === 'FIGURE') dialog.close();
+    });
+    dialog.addEventListener('close', () => declencheur?.focus());
+  });
+</script>

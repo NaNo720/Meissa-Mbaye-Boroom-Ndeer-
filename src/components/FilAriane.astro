@@ -1,0 +1,25 @@
+---
+/** Fil d'Ariane sur fond sombre (en-têtes des sous-pages). Le dernier élément est la page courante. */
+interface Props {
+  etapes: { label: string; href?: string }[];
+  label: string;
+}
+const { etapes, label } = Astro.props;
+---
+
+<nav aria-label={label}>
+  <ol class="flex flex-wrap items-center gap-x-2 text-sm text-creme/70" role="list">
+    {
+      etapes.map((e, i) => (
+        <li class="flex items-center gap-2">
+          {i > 0 && <span aria-hidden="true">›</span>}
+          {e.href ? (
+            <a href={e.href} class="inline-block py-2 hover:text-creme hover:underline">{e.label}</a>
+          ) : (
+            <span aria-current="page" class="text-creme">{e.label}</span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

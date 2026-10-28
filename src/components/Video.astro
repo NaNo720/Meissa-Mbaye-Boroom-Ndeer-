@@ -1,0 +1,66 @@
+---
+import Icon from './Icon.astro';
+import { ui, type Lang } from '@/i18n';
+
+/**
+ * Vidéo YouTube chargée au clic (rien n'est téléchargé avant : vitesse mobile et RGPD).
+ * Sans identifiant, affiche l'emplacement réservé de la maquette.
+ */
+interface Props {
+  lang: Lang;
+  youtubeId: string;
+  label: string;
+  /** Seconde de départ de la vidéo. */
+  debut?: number;
+  tone?: 'sombre' | 'indigo';
+  class?: string;
+}
+const { lang, youtubeId, label, debut = 0, tone = 'sombre', class: className = '' } = Astro.props;
+const fond = tone === 'indigo' ? 'bg-indigo' : 'bg-scene';
+---
+
+{
+  youtubeId ? (
+    <div class:list={['relative aspect-video overflow-hidden rounded-lg', fond, className]} data-video={youtubeId} data-debut={debut}>
+      <img
+        src={`https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-0 size-full object-cover opacity-80"
+      />
+      <button type="button" class="absolute inset-0 flex items-center justify-center text-creme" data-video-lancer>
+        <span class="flex size-16 items-center justify-center rounded-full border-2 border-creme/80 bg-noir/40">
+          <Icon name="lecture" class="size-7" />
+        </span>
+        <span class="sr-only">{ui.commun.lireVideo[lang]} : {label}</span>
+      </button>
+    </div>
+  ) : (
+    <div
+      role="img"
+      aria-label={label}
+      class:list={['flex aspect-video flex-col items-center justify-center gap-3 rounded-lg border border-creme/10 text-center text-xs text-creme/70', fond, className]}
+    >
+      <span class="flex size-12 items-center justify-center rounded-full border-2 border-creme/60" aria-hidden="true">
+        <Icon name="lecture" class="size-5" />
+      </span>
+      <span aria-hidden="true">{label}</span>
+    </div>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((bloc) => {
+    bloc.querySelector('[data-video-lancer]')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      const debut = Number(bloc.dataset.debut) || 0;
+      iframe.src = `https://www.youtube-nocookie.com/embed/${bloc.dataset.video}?autoplay=1&rel=0${debut ? `&start=${debut}` : ''}`;
+      iframe.title = bloc.querySelector('.sr-only')?.textContent ?? '';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.className = 'absolute inset-0 size-full';
+      bloc.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>

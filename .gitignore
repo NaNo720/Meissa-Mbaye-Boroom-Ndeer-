@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Médias sources lourds (non déployés)
+medias-sources/
+
+# Réglages locaux de l'assistant
+.claude/settings.local.json

@@ -1,0 +1,18 @@
+---
+import { href, ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<section class="zone-pale bg-indigo text-carte" aria-labelledby="bandeau-pro">
+  <div class="container-site flex flex-col gap-6 py-14 sm:flex-row sm:items-center sm:justify-between">
+    <div class="max-w-xl">
+      <h2 id="bandeau-pro" class="text-4xl">{ui.commun.programmateursTitre[lang]}</h2>
+      <p class="mt-3 text-sm text-carte/85">{ui.commun.programmateursTexte[lang]}</p>
+    </div>
+    <a href={href(lang, 'pro')} class="btn btn-clair self-start sm:self-auto">{ui.commun.ouvrirPro[lang]}</a>
+  </div>
+</section>

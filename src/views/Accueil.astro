@@ -1,0 +1,242 @@
+---
+import Base from '@/layouts/Base.astro';
+import Social from '@/components/Social.astro';
+import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
+import { photos } from '@/data/photos';
+import Dates from '@/components/Dates.astro';
+import { datesAVenir } from '@/data/tournee';
+import BandeauPro from '@/components/BandeauPro.astro';
+import BandeauTournee from '@/components/BandeauTournee.astro';
+import { site } from '@/data/site';
+import { distinctions, ilsEnParlent } from '@/data/artiste';
+import { href, ui, type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    title: 'Meïssa Mbaye — griot, poète et conteur',
+    description:
+      "Héritier d'une famille de griots, Meïssa Mbaye chante Senghor et Paul Valéry et raconte les génies du Sénégal. Deux spectacles à programmer : Meïssa Mbaye Boroom Ndeer et Meïssa conteur.",
+    kicker: 'Griot · Poète · Conteur',
+    h1: 'La parole revient sur scène.',
+    intro:
+      "Héritier d'une famille de griots, Meïssa Mbaye chante Senghor et Paul Valéry, et raconte les génies du Sénégal. Deux spectacles, une même voix.",
+    introCourte: 'Deux spectacles, une même voix.',
+    decouvrir: 'Découvrir les spectacles',
+    avecSon: 'Voir la vidéo avec le son',
+    videoPh: "[Vidéo d'arrière-plan : captation live en boucle, sans son]",
+    ilsEnParlent: 'Ils en parlent',
+    revue: 'Revue de presse',
+    deuxTitre: 'Deux spectacles',
+    deuxTexte: "Choisissez l'univers qui correspond à votre programmation.",
+    borom: {
+      kicker: 'Concert · Solo, duo, tribu',
+      texte: 'Meïssa Mbaye, alias Boroom Ndeer : poésie, musique et oralité, de Senghor aux poètes de la Harlem Renaissance et à Paul Valéry.',
+      court: 'Senghor, Harlem Renaissance, Valéry. Seul, en duo ou avec sa tribu.',
+      public: 'Festivals de poésie · salles · associations',
+      lien: 'Découvrir le concert',
+    },
+    conteur: {
+      kicker: 'Conte musical · Dès 6 ans',
+      texte: 'Les génies du Sénégal racontés et chantés, autour du livre Génies. Calebasses, guitare, voix.',
+      court: 'Les génies du Sénégal, dès 6 ans. Calebasses, guitare, voix.',
+      public: 'Festivals de conte · médiathèques · écoles',
+      lien: 'Découvrir le spectacle',
+    },
+    artisteTitre: 'Meïssa Mbaye',
+    artisteTexte:
+      "Né à Dakar en 1959 dans une famille de griots, Meïssa Mbaye a cofondé le groupe Kunta Kinté en 1988, chanté le gospel à Atlanta et mis en musique la poésie de Senghor. Musicien, il est Boroom Ndeer, du nom du griot gardien du Ndeer, le tambour royal des royaumes wolofs ; conteur, il fait vivre les génies du Sénégal. Il dirige aujourd'hui le Werekaan Institute, dédié à l'art oratoire africain.",
+    bio: 'Son parcours et sa discographie',
+  },
+  en: {
+    title: 'Meïssa Mbaye — griot, poet and storyteller',
+    description:
+      'Heir to a family of griots, Meïssa Mbaye sings Senghor and Paul Valéry and tells the tales of Senegal’s spirits. Two shows to book: Meïssa Mbaye Boroom Ndeer and Meïssa the storyteller.',
+    kicker: 'Griot · Poet · Storyteller',
+    h1: 'The spoken word returns to the stage.',
+    intro:
+      'Heir to a family of griots, Meïssa Mbaye sings Senghor and Paul Valéry, and tells the tales of Senegal’s spirits. Two shows, one voice.',
+    introCourte: 'Two shows, one voice.',
+    decouvrir: 'Discover the shows',
+    avecSon: 'Watch the video with sound',
+    videoPh: '[Background video: live footage on a loop, muted]',
+    ilsEnParlent: 'In the press',
+    revue: 'Press review',
+    deuxTitre: 'Two shows',
+    deuxTexte: 'Choose the world that fits your programme.',
+    borom: {
+      kicker: 'Concert · Solo, duo, band',
+      texte: 'Meïssa Mbaye, a.k.a. Boroom Ndeer: poetry, music and the spoken word, from Senghor to the Harlem Renaissance poets and Paul Valéry.',
+      court: 'Senghor, Harlem Renaissance, Valéry. Solo, duo or with his band.',
+      public: 'Poetry festivals · venues · associations',
+      lien: 'Discover the concert',
+    },
+    conteur: {
+      kicker: 'Musical tale · Ages 6 and up',
+      texte: 'The spirits of Senegal, told and sung, around the book Génies. Calabashes, guitar, voice.',
+      court: 'The spirits of Senegal, ages 6 and up. Calabashes, guitar, voice.',
+      public: 'Storytelling festivals · libraries · schools',
+      lien: 'Discover the show',
+    },
+    artisteTitre: 'Meïssa Mbaye',
+    artisteTexte:
+      'Born in Dakar in 1959 into a family of griots, Meïssa Mbaye co-founded the band Kunta Kinté in 1988, sang gospel in Atlanta and set Senghor’s poetry to music. As a musician he is Boroom Ndeer, named after the griot who kept the Ndeer, the royal drum of the Wolof kingdoms; as a storyteller he brings the spirits of Senegal to life. Today he leads the Werekaan Institute, dedicated to African oratory.',
+    bio: 'His career and discography',
+  },
+}[lang];
+
+const video = site.videoFond;
+---
+
+<Base lang={lang} title={t.title} description={t.description} image={video.affiche || undefined}>
+  <!-- Héros : vidéo de fond sans son, avec bouton pause (WCAG 2.2.2) -->
+  <section class="relative isolate overflow-hidden bg-scene text-creme">
+    {
+      video.horizontale || video.verticale ? (
+        <video
+          class="absolute inset-0 -z-10 size-full object-cover opacity-60"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster={video.affiche || undefined}
+          aria-hidden="true"
+          data-video-fond
+        >
+          {video.verticale && <source src={video.verticale} type="video/mp4" media="(max-width: 640px)" />}
+          {video.horizontale && <source src={video.horizontale} type="video/mp4" />}
+        </video>
+      ) : (
+        <p class="absolute right-4 top-4 rounded-full border border-dashed border-creme/30 px-3 py-1 text-[0.7rem] text-creme/70 sm:right-8" aria-hidden="true">
+          {t.videoPh}
+        </p>
+      )
+    }
+
+    <div class="container-site flex min-h-[calc(100svh-4rem)] flex-col justify-end pb-24 pt-28 sm:min-h-0 sm:pb-10 sm:pt-28">
+      <p class="kicker text-or">{t.kicker}</p>
+      <h1 class="mt-5 max-w-3xl text-5xl leading-[1.05] sm:text-7xl">{t.h1}</h1>
+      <p class="mt-6 hidden max-w-lg text-base text-creme/85 sm:block">{t.intro}</p>
+      <p class="mt-5 text-base text-creme/85 sm:hidden">{t.introCourte}</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#spectacles" class="btn btn-or">{t.decouvrir}</a>
+        {site.videoAvecSon && <a href={site.videoAvecSon} target="_blank" rel="noopener" class="btn btn-contour-clair">{t.avecSon}</a>}
+      </div>
+
+      <div class="mt-12 flex items-center justify-between gap-4 border-t border-creme/15 pt-6">
+        <Social lang={lang} libelle />
+        {
+          (video.horizontale || video.verticale) && (
+            <button
+              type="button"
+              class="btn btn-contour-clair absolute right-4 top-4 size-11 px-0 sm:static sm:size-auto sm:px-5"
+              aria-pressed="false"
+              data-video-pause
+            >
+              <Icon name="pause" class="size-4" />
+              <span class="sr-only sm:not-sr-only" data-video-pause-label>{ui.commun.pause[lang]}</span>
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <BandeauTournee lang={lang} />
+
+  <!-- Ils en parlent -->
+  <section class="bg-sable" aria-labelledby="presse-titre">
+    <div class="container-site flex flex-col gap-4 py-7 lg:flex-row lg:items-center lg:gap-10">
+      <h2 id="presse-titre" class="kicker shrink-0 font-sans text-texte-2">{t.ilsEnParlent}</h2>
+      <ul class="flex flex-1 flex-wrap gap-x-8 gap-y-2 font-serif text-xl" role="list">
+        {ilsEnParlent.map((m) => <li>{m.lien ? <a href={m.lien} target="_blank" rel="noopener" class="hover:underline">{m.media}</a> : m.media}</li>)}
+      </ul>
+      <a href={href(lang, 'pro') + '#presse'} class="lien shrink-0 py-2 text-sm text-terracotta">{t.revue} →</a>
+    </div>
+  </section>
+
+  <!-- Deux spectacles -->
+  <section id="spectacles" class="container-site scroll-mt-20 py-16 sm:py-20" aria-labelledby="deux-titre">
+    <h2 id="deux-titre" class="text-4xl sm:text-5xl">{t.deuxTitre}</h2>
+    <p class="mt-3 text-texte-2">{t.deuxTexte}</p>
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {
+        [
+          { slug: 'borom-ndeer', titre: ui.nav.borom[lang], c: t.borom, couleur: 'text-terracotta', photo: photos.duoScene },
+          { slug: 'conteur', titre: lang === 'fr' ? 'Meïssa conteur' : 'Meïssa the storyteller', c: t.conteur, couleur: 'text-indigo', photo: photos.conteur },
+        ].map((s) => (
+          <article class="carte group relative flex flex-col overflow-hidden">
+            <Photo photo={s.photo} lang={lang} sizes="(min-width: 768px) 50vw, 100vw" class="hidden aspect-[16/10] w-full sm:block" />
+            <div class="flex flex-1 flex-col p-6 sm:p-7">
+              <p class:list={['kicker', s.couleur]}>{s.c.kicker}</p>
+              <h3 class="mt-3 text-4xl">
+                <a href={href(lang, s.slug)} class="after:absolute after:inset-0">{s.titre}</a>
+              </h3>
+              <p class="mt-3 text-sm">
+                <span class="hidden sm:inline">{s.c.texte}</span>
+                <span class="sm:hidden">{s.c.court}</span>
+              </p>
+              <p class="mt-3 hidden text-xs text-texte-2 sm:block">{s.c.public}</p>
+              <p class:list={['mt-5 text-sm font-medium group-hover:underline', s.couleur]} aria-hidden="true">
+                <span class="hidden sm:inline">{s.c.lien}</span>
+                <span class="sm:hidden">{ui.commun.decouvrir[lang]}</span> →
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- L'artiste -->
+  <section class="bg-sable" aria-labelledby="artiste-titre">
+    <div class="container-site grid gap-10 py-16 sm:py-20 md:grid-cols-2 md:items-center">
+      <Photo photo={photos.guitareMer} lang={lang} sizes="(min-width: 768px) 50vw, 100vw" class="aspect-[4/5] w-full rounded-lg md:aspect-square" />
+      <div>
+        <h2 id="artiste-titre" class="text-4xl sm:text-5xl">{t.artisteTitre}</h2>
+        <p class="mt-5">{t.artisteTexte}</p>
+        <ul class="mt-6 grid gap-x-8 sm:grid-cols-2" role="list">
+          {distinctions.map((d) => <li class="border-t border-bordure py-3 text-sm" set:html={fmt(d[lang])} />)}
+        </ul>
+        <a href={href(lang, 'borom-ndeer') + '#parcours'} class="lien mt-4 inline-block py-2 text-sm text-terracotta">{t.bio} →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prochaines dates : masquées tant qu'aucune date n'est annoncée -->
+  {
+    datesAVenir().length > 0 && (
+      <section class="container-site py-16 sm:py-20">
+        <Dates lang={lang} />
+      </section>
+    )
+  }
+
+  <BandeauPro lang={lang} />
+</Base>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('[data-video-fond]');
+  const bouton = document.querySelector<HTMLButtonElement>('[data-video-pause]');
+  if (video && bouton) {
+    const label = bouton.querySelector('[data-video-pause-label]')!;
+    const fr = document.documentElement.lang === 'fr';
+    const maj = () => {
+      bouton.setAttribute('aria-pressed', String(video.paused));
+      label.textContent = video.paused ? (fr ? 'Lecture' : 'Play') : fr ? 'Pause' : 'Pause';
+    };
+    // Mouvement réduit : la vidéo reste à l'arrêt.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) video.pause();
+    bouton.addEventListener('click', () => (video.paused ? video.play() : video.pause()));
+    video.addEventListener('play', maj);
+    video.addEventListener('pause', maj);
+    maj();
+  }
+</script>

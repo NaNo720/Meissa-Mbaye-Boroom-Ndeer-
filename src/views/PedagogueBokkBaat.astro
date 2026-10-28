@@ -1,0 +1,167 @@
+---
+import Base from '@/layouts/Base.astro';
+import Photo from '@/components/Photo.astro';
+import FilAriane from '@/components/FilAriane.astro';
+import { photos } from '@/data/photos';
+import { bokkBaat, formules, professeurChant } from '@/data/pedagogue';
+import { href, ui, type Lang } from '@/i18n';
+
+/**
+ * Bokk Baat — Meïssa professeur de chant (sous-page de /pedagogue, Nano 27/10/2026) :
+ * le projet « la voix partagée », puis les formations pour chanteurs et artistes.
+ */
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    titre: 'Bokk Baat',
+    description:
+      'Bokk Baat, « la voix partagée » : ensemble vocal interculturel dirigé par Meïssa Mbaye à Dakar, et formations de chant pour chanteurs et artistes autour de la technique vocale africaine.',
+    ariane: 'Fil d’Ariane',
+    sommaire: 'Sur cette page',
+    rubriques: { projet: 'Le projet', formations: 'Formations pour chanteurs et artistes' },
+    projetKicker: 'Le projet',
+    formationsKicker: 'Formations',
+    formationsTitre: 'Pour les chanteurs et les artistes',
+    formationsIntro: 'Meïssa Mbaye accompagne aussi les chanteurs, les comédiens et les artistes qui veulent travailler leur voix avec la technique vocale africaine.',
+    pourQui: 'Pour qui',
+    rejoindre: 'Participer au projet Bokk Baat',
+    reserver: 'Réserver une formation de chant',
+    kaayWox: 'Découvrir Kaay Wax, le projet de conte',
+    illustration: 'Illustration',
+    finTitre: 'Travailler sa voix avec Meïssa',
+    finTexte: 'Ateliers Bokk Baat, cours et coaching vocal. Réponse sous 48 h.',
+  },
+  en: {
+    titre: 'Bokk Baat',
+    description:
+      'Bokk Baat, “the shared voice”: an intercultural vocal ensemble led by Meïssa Mbaye in Dakar, and singing training for singers and artists based on African vocal technique.',
+    ariane: 'Breadcrumb',
+    sommaire: 'On this page',
+    rubriques: { projet: 'The project', formations: 'Training for singers and artists' },
+    projetKicker: 'The project',
+    formationsKicker: 'Training',
+    formationsTitre: 'For singers and artists',
+    formationsIntro: 'Meïssa Mbaye also coaches singers, actors and artists who want to work on their voice with African vocal technique.',
+    pourQui: 'For',
+    rejoindre: 'Join the Bokk Baat project',
+    reserver: 'Book singing training',
+    kaayWox: 'Discover Kaay Wax, the storytelling project',
+    illustration: 'Illustration',
+    finTitre: 'Work on your voice with Meïssa',
+    finTexte: 'Bokk Baat workshops, lessons and vocal coaching. Reply within 48 hours.',
+  },
+}[lang];
+
+const contact = `${href(lang, 'contact')}?offre=bokk-baat`;
+const coachingVocal = formules.find((f) => f.type.fr === 'Voix')!;
+---
+
+<Base lang={lang} title={`${t.titre} · ${ui.nav.pedagogue[lang]}`} description={t.description}>
+  <!-- En-tête -->
+  <section class="bg-noir text-creme">
+    <div class="container-site grid gap-10 pb-14 pt-8 sm:pt-10 lg:grid-cols-2 lg:items-center">
+      <div>
+        <FilAriane label={t.ariane} etapes={[{ label: ui.nav.pedagogue[lang], href: href(lang, 'pedagogue') }, { label: t.titre }]} />
+        <p class="kicker mt-6 text-or">{bokkBaat.kicker[lang]}</p>
+        <h1 class="mt-4 text-6xl sm:text-7xl">{bokkBaat.nom}</h1>
+        <p class="mt-2 font-serif text-2xl italic text-or">{bokkBaat.traduction[lang]}</p>
+        <p class="mt-6 max-w-xl text-creme/85">{bokkBaat.accroche[lang]}</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href={contact} class="btn btn-or">{t.rejoindre}</a>
+          <a href="#formations" class="btn btn-contour-clair">{t.rubriques.formations}</a>
+        </div>
+      </div>
+      <!-- Image générée par IA : la mention « Illustration » évite de la faire passer pour une photo du vrai ensemble -->
+      <figure>
+        <Photo photo={photos.bokkBaatChorale} lang={lang} sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[3/2] w-full rounded-lg" prioritaire />
+        <figcaption class="mt-2 text-right text-xs text-creme/60">{t.illustration}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Sommaire -->
+  <nav aria-label={t.sommaire} class="sticky top-16 z-30 border-b border-bordure bg-creme/95 backdrop-blur">
+    <ul class="container-site flex gap-1 overflow-x-auto py-2 text-sm [scrollbar-width:none]" role="list">
+      {
+        (Object.entries(t.rubriques) as [string, string][]).map(([id, label]) => (
+          <li class="shrink-0">
+            <a href={`#${id}`} class="inline-flex min-h-11 items-center rounded-full px-4 hover:bg-sable">{label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- 1. Le projet -->
+  <section id="projet" class="container-site scroll-mt-32 py-16 sm:py-20" aria-labelledby="projet-titre">
+    <p class="kicker text-terracotta">{t.projetKicker}</p>
+    <h2 id="projet-titre" class="mt-3 text-4xl sm:text-5xl">{bokkBaat.traduction[lang]}</h2>
+    <p class="mt-4 max-w-3xl text-texte-2">{bokkBaat.activite[lang]}</p>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-3">
+      <div>
+        <h3 class="text-3xl">{bokkBaat.contexte.titre[lang]}</h3>
+        {bokkBaat.contexte.paragraphes.map((p) => <p class="mt-4 text-sm leading-relaxed text-texte-2">{p[lang]}</p>)}
+      </div>
+      <div>
+        <h3 class="text-3xl">{bokkBaat.objectifs.titre[lang]}</h3>
+        <ul class="mt-4 space-y-3" role="list">
+          {bokkBaat.objectifs.items.map((o) => <li class="border-t border-bordure pt-3 text-sm leading-relaxed">{o[lang]}</li>)}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-3xl">{bokkBaat.impact.titre[lang]}</h3>
+        <ul class="mt-4 space-y-3" role="list">
+          {bokkBaat.impact.items.map((o) => <li class="border-t border-bordure pt-3 text-sm leading-relaxed">{o[lang]}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-14 rounded-lg bg-sable p-6 sm:p-8">
+      <h3 class="text-3xl">{bokkBaat.direction.titre[lang]}</h3>
+      <p class="mt-4 max-w-3xl leading-relaxed">{bokkBaat.direction.texte[lang]}</p>
+    </div>
+  </section>
+
+  <!-- 2. Formations pour chanteurs et artistes -->
+  <section id="formations" class="scroll-mt-32 bg-scene text-creme" aria-labelledby="formations-titre">
+    <div class="container-site grid gap-12 py-16 sm:py-20 lg:grid-cols-[3fr_2fr]">
+      <div>
+        <p class="kicker text-or">{t.formationsKicker}</p>
+        <h2 id="formations-titre" class="mt-3 text-4xl sm:text-5xl">{t.formationsTitre}</h2>
+        <p class="mt-5 text-lg text-creme/90">{t.formationsIntro}</p>
+        <h3 class="mt-10 text-3xl">{professeurChant.titre[lang]}</h3>
+        {professeurChant.paragraphes.map((p) => <p class="mt-4 leading-relaxed text-creme/80">{p[lang]}</p>)}
+      </div>
+      <div class="self-start rounded-lg border border-creme/15 p-6 sm:p-8">
+        <p class="kicker text-or">{coachingVocal.type[lang]}</p>
+        <h3 class="mt-3 text-3xl">{coachingVocal.titre[lang]}</h3>
+        <p class="mt-3 leading-relaxed text-creme/80">{coachingVocal.texte[lang]}</p>
+        <p class="mt-5 border-t border-creme/15 pt-4 text-sm">
+          <span class="kicker mr-2 text-[0.65rem] text-creme/60">{t.pourQui}</span>
+          {coachingVocal.publics[lang]}
+        </p>
+        <a href={contact} class="btn btn-or mt-6">{t.reserver}</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-site py-10">
+    <a href={href(lang, 'pedagogue/kaay-wax')} class="lien py-2 text-sm text-indigo">{t.kaayWox} →</a>
+  </div>
+
+  <!-- Bandeau final -->
+  <section class="zone-pale bg-terracotta text-carte" aria-labelledby="fin-titre">
+    <div class="container-site grid gap-6 py-14 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <h2 id="fin-titre" class="text-4xl sm:text-5xl">{t.finTitre}</h2>
+        <p class="mt-3 text-sm text-carte/85">{t.finTexte}</p>
+      </div>
+      <a href={contact} class="btn btn-clair self-start md:self-auto">{t.reserver}</a>
+    </div>
+  </section>
+</Base>

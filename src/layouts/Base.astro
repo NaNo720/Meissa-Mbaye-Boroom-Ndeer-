@@ -1,0 +1,100 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import BarreMobile from '@/components/BarreMobile.astro';
+import { href, slugOf, ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Image de partage (Open Graph), chemin absolu ou relatif au site. */
+  image?: string;
+}
+const { lang, title, description, image } = Astro.props;
+
+const slug = slugOf(Astro.url.pathname);
+const absolu = (path: string) => new URL(path, Astro.site).href;
+const titreComplet = slug ? `${title} · Meïssa Mbaye` : title;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- APERÇU TEMPORAIRE : ?theme=vert active le thème vert pour la session, ?theme=normal le retire. À supprimer après décision. -->
+    <script is:inline>
+      (function () {
+        try {
+          var p = new URLSearchParams(location.search).get('theme');
+          if (p === 'vert') sessionStorage.setItem('theme', 'vert');
+          if (p === 'normal') sessionStorage.removeItem('theme');
+          if (sessionStorage.getItem('theme') === 'vert') document.documentElement.dataset.theme = 'vert';
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="theme-color" content="#1C1612" />
+
+    <link rel="canonical" href={absolu(href(lang, slug))} />
+    <link rel="alternate" hreflang="fr" href={absolu(href('fr', slug))} />
+    <link rel="alternate" hreflang="en" href={absolu(href('en', slug))} />
+    <link rel="alternate" hreflang="x-default" href={absolu(href('fr', slug))} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Meïssa Mbaye" />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_GB'} />
+    <meta property="og:title" content={titreComplet} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={absolu(href(lang, slug))} />
+    {image && <meta property="og:image" content={absolu(image)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body class="min-h-dvh">
+    <a href="#contenu" class="sr-only z-50 rounded-full bg-or px-4 py-2 text-noir focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+      {ui.nav.evitement[lang]}
+    </a>
+    <Header lang={lang} />
+    <main id="contenu">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <BarreMobile lang={lang} />
+
+    <!-- Confirmation de copie des adresses e-mail -->
+    <div
+      class="pointer-events-none fixed inset-x-4 bottom-24 z-50 mx-auto max-w-sm rounded-lg bg-noir px-4 py-3 text-center text-sm text-creme opacity-0 shadow-lg transition-opacity duration-300 sm:bottom-8"
+      role="status"
+      aria-live="polite"
+      data-toast
+      data-msg-copie={lang === 'fr' ? 'Adresse copiée : {email}. Collez-la dans votre messagerie si elle ne s’ouvre pas.' : 'Address copied: {email}. Paste it into your email if it does not open.'}
+    >
+    </div>
+  </body>
+</html>
+
+<script>
+  // Un lien mailto: n'ouvre rien sur un ordinateur sans logiciel de messagerie (Gmail dans le navigateur).
+  // On garde l'ouverture de la messagerie et on copie en plus l'adresse, avec une confirmation.
+  const toast = document.querySelector<HTMLElement>('[data-toast]');
+  let minuterie: number | undefined;
+  document.addEventListener('click', async (e) => {
+    const lien = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="mailto:"]');
+    if (!lien || !toast) return;
+    const email = decodeURIComponent(lien.href.slice('mailto:'.length).split('?')[0]);
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch {
+      return; // Copie impossible (navigateur ancien) : seule l'ouverture de la messagerie reste.
+    }
+    toast.textContent = toast.dataset.msgCopie!.replace('{email}', email);
+    toast.classList.replace('opacity-0', 'opacity-100');
+    window.clearTimeout(minuterie);
+    minuterie = window.setTimeout(() => toast.classList.replace('opacity-100', 'opacity-0'), 5000);
+  });
+</script>

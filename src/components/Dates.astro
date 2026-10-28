@@ -1,0 +1,74 @@
+---
+import { datesAVenir, type DateTournee } from '@/data/tournee';
+import { accent, spectacles, type OffreId } from '@/data/spectacles';
+import { href, ui, type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+
+interface Props {
+  lang: Lang;
+  /** Liste fournie (page Tournée) ; sinon les prochaines dates publiées. */
+  dates?: DateTournee[];
+  offre?: OffreId;
+  limite?: number;
+  /** Affiche le titre « Prochaines dates » et le lien vers l'agenda. */
+  entete?: boolean;
+}
+const { lang, dates, offre, limite = 3, entete = true } = Astro.props;
+const liste = dates ?? datesAVenir(offre).slice(0, limite);
+
+const jour = (d: DateTournee) =>
+  d.date
+    ? new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(d.date))
+    : '[JJ MMM]';
+const annee = (d: DateTournee) => (d.date ? d.date.slice(0, 4) : '');
+const heure = (d: DateTournee) => {
+  if (!d.heure) return '';
+  const h = lang === 'fr' ? d.heure.replace(':', ' h ').replace(/ h 00$/, ' h') : d.heure;
+  return `${h} (${ui.dates.heureLocale[lang]})`;
+};
+---
+
+<div>
+  {
+    entete && (
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 class="text-4xl sm:text-5xl">{ui.dates.titre[lang]}</h2>
+        <a href={href(lang, 'tournee')} class="lien py-2 text-sm text-terracotta">
+          {ui.dates.toutAgenda[lang]} →
+        </a>
+      </div>
+    )
+  }
+  {
+    liste.length === 0 ? (
+      <p class="mt-8 border-t border-bordure pt-6 text-texte-2">{ui.dates.aucune[lang]}</p>
+    ) : (
+      <ul class:list={['divide-y divide-bordure border-y border-bordure', entete && 'mt-8']} role="list">
+        {liste.map((d) => (
+          <li class="grid gap-x-6 gap-y-1 py-5 sm:grid-cols-[8rem_1fr_9rem_7rem] sm:items-center" data-offre={d.spectacle}>
+            <p class="font-serif text-2xl">
+              <span set:html={fmt(jour(d))} />
+              {annee(d) && <span class="sr-only"> {annee(d)}</span>}
+            </p>
+            <p class="text-sm">
+              <span set:html={fmt(`${d.ville}, ${d.pays} — ${d.lieu}`)} />
+              {heure(d) && <span class="block text-texte-2">{heure(d)}</span>}
+            </p>
+            <p class:list={['text-sm', accent[d.spectacle].texte]}>{spectacles[d.spectacle].titre[lang]}</p>
+            <p class="text-sm">
+              {d.date && d.date < new Date().toISOString().slice(0, 10) ? (
+                <span class="text-texte-2">{d.date.slice(0, 4)}</span>
+              ) : d.billetterie ? (
+                <a href={d.billetterie} target="_blank" rel="noopener" class="lien text-terracotta">
+                  {ui.dates.billetterie[lang]}
+                </a>
+              ) : (
+                <span class="text-texte-2">{ui.dates.billetterie[lang]} <mark class="todo">[lien]</mark></span>
+              )}
+            </p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</div>

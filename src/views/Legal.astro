@@ -1,0 +1,182 @@
+---
+import Base from '@/layouts/Base.astro';
+import { site, mailtoUrl } from '@/data/site';
+import { type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+
+/** Mentions légales et politique de confidentialité (même gabarit). */
+interface Props {
+  lang: Lang;
+  page: 'mentions' | 'confidentialite';
+}
+const { lang, page } = Astro.props;
+
+const hebergeur = site.mentions.hebergeur || '[À COMPLÉTER — prévu : Netlify]';
+const contact = site.bookingEmail;
+const aCompleter = (v: string) => v || '[À COMPLÉTER]';
+const ed = site.mentions.editeur;
+const rea = site.mentions.realisation;
+const editeurFr = `${ed.nom} — ${ed.adresse} — NINEA ${ed.ninea}.`;
+const realisationFr = `${rea.nom} — ${aCompleter(rea.ville)} — RCCM ${aCompleter(rea.rccm)} — NINEA ${aCompleter(rea.ninea)}.`;
+const realisationContact = rea.contact ? ` Contact : ${rea.contact}` : ' Contact : [À COMPLÉTER].';
+
+type Section = { titre: string; paragraphes: string[] };
+const contenus: Record<typeof page, Record<Lang, { titre: string; description: string; sections: Section[] }>> = {
+  mentions: {
+    fr: {
+      titre: 'Mentions légales',
+      description: 'Mentions légales du site de Meïssa Mbaye.',
+      sections: [
+        {
+          titre: 'Éditeur du site',
+          paragraphes: [editeurFr, `Directeur de la publication : ${site.mentions.directeurPublication}.`, `Contact : ${contact}`],
+        },
+        {
+          titre: 'Conception et réalisation',
+          paragraphes: [realisationFr + realisationContact],
+        },
+        { titre: 'Hébergement', paragraphes: [hebergeur] },
+        {
+          titre: 'Propriété intellectuelle',
+          paragraphes: [
+            'Les textes, photographies, vidéos, enregistrements et visuels de ce site appartiennent à Meïssa Mbaye ou à leurs auteurs respectifs. Toute reproduction sans autorisation est interdite, à l’exception des photos et documents de l’espace pro, libres pour un usage presse avec mention des crédits.',
+          ],
+        },
+        {
+          titre: 'Données personnelles',
+          paragraphes: ['Le traitement des données envoyées par le formulaire est décrit dans la politique de confidentialité.'],
+        },
+      ],
+    },
+    en: {
+      titre: 'Legal notice',
+      description: 'Legal notice for Meïssa Mbaye’s website.',
+      sections: [
+        {
+          titre: 'Publisher',
+          paragraphes: [editeurFr, `Publication director: ${site.mentions.directeurPublication}.`, `Contact: ${contact}`],
+        },
+        {
+          titre: 'Design and development',
+          paragraphes: [realisationFr + realisationContact.replace('Contact :', 'Contact:')],
+        },
+        { titre: 'Hosting', paragraphes: [hebergeur] },
+        {
+          titre: 'Intellectual property',
+          paragraphes: [
+            'The texts, photographs, videos, recordings and visuals on this site belong to Meïssa Mbaye or to their respective authors. Any reproduction without permission is prohibited, except for the photos and documents in the pro area, which may be used by the press with credits.',
+          ],
+        },
+        {
+          titre: 'Personal data',
+          paragraphes: ['How data sent through the form is processed is described in the privacy policy.'],
+        },
+      ],
+    },
+  },
+  confidentialite: {
+    fr: {
+      titre: 'Politique de confidentialité',
+      description: 'Comment le site de Meïssa Mbaye traite vos données personnelles.',
+      sections: [
+        {
+          titre: 'Données collectées',
+          paragraphes: [
+            'Le formulaire de réservation recueille : le nom et la fonction de la personne, le nom, le type, la ville et le pays de la structure, l’e-mail, le téléphone, la date souhaitée, le public attendu et le message.',
+          ],
+        },
+        {
+          titre: 'Finalité et base légale',
+          paragraphes: [
+            'Ces données servent uniquement à répondre à votre demande, préparer un devis et organiser le spectacle (mesures précontractuelles à votre demande). Elles ne sont jamais vendues ni utilisées à d’autres fins.',
+          ],
+        },
+        {
+          titre: 'Destinataires',
+          paragraphes: [
+            'Seules les personnes chargées des réservations dans l’équipe de Meïssa Mbaye y ont accès, selon leur rôle. Les e-mails sont envoyés via un prestataire d’envoi (Brevo).',
+          ],
+        },
+        {
+          titre: 'Durée de conservation',
+          paragraphes: ['Les données sont conservées [3 ans après le dernier contact — À CONFIRMER], puis supprimées.'],
+        },
+        {
+          titre: 'Mesure d’audience',
+          paragraphes: [
+            'La fréquentation du site est mesurée avec Plausible, un outil sans cookie qui ne collecte aucune donnée personnelle. Les vidéos YouTube ne se chargent qu’après un clic, en mode confidentialité renforcée.',
+          ],
+        },
+        {
+          titre: 'Vos droits',
+          paragraphes: [
+            `Vous pouvez accéder à vos données, les faire rectifier ou supprimer, ou vous opposer à leur traitement en écrivant à ${contact}. Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (cnil.fr).`,
+          ],
+        },
+      ],
+    },
+    en: {
+      titre: 'Privacy policy',
+      description: 'How Meïssa Mbaye’s website processes your personal data.',
+      sections: [
+        {
+          titre: 'Data collected',
+          paragraphes: [
+            'The booking form collects: your name and position; the name, type, city and country of your organisation; your email address and phone number; the preferred date, expected audience and your message.',
+          ],
+        },
+        {
+          titre: 'Purpose and legal basis',
+          paragraphes: [
+            'This data is used only to answer your request, prepare a quote and organise the show (pre-contractual steps at your request). It is never sold or used for any other purpose.',
+          ],
+        },
+        {
+          titre: 'Recipients',
+          paragraphes: [
+            'Only the people in charge of bookings in Meïssa Mbaye’s team can access it, according to their role. Emails are sent through an email service provider (Brevo).',
+          ],
+        },
+        {
+          titre: 'Retention period',
+          paragraphes: ['Data is kept for [3 years after the last contact — À CONFIRMER], then deleted.'],
+        },
+        {
+          titre: 'Audience measurement',
+          paragraphes: [
+            'Site traffic is measured with Plausible, a cookie-free tool that collects no personal data. YouTube videos only load after a click, in privacy-enhanced mode.',
+          ],
+        },
+        {
+          titre: 'Your rights',
+          paragraphes: [
+            `You can access, correct or delete your data, or object to its processing, by writing to ${contact}. If you believe your rights have not been respected, you can lodge a complaint with the CNIL, the French data protection authority (cnil.fr).`,
+          ],
+        },
+      ],
+    },
+  },
+};
+
+const c = contenus[page][lang];
+const maj = lang === 'fr' ? 'Dernière mise à jour : 28 octobre 2026.' : 'Last updated: 28 October 2026.';
+---
+
+<Base lang={lang} title={c.titre} description={c.description}>
+  <div class="container-site py-16 sm:py-20">
+    <h1 class="text-5xl sm:text-6xl">{c.titre}</h1>
+    <p class="mt-3 text-sm text-texte-2">{maj}</p>
+    <div class="mt-10 max-w-prose">
+      {
+        c.sections.map((s) => (
+          <section class="border-t border-bordure py-6">
+            <h2 class="text-2xl">{s.titre}</h2>
+            {s.paragraphes.map((p) => (
+              <p class="mt-3 leading-relaxed" set:html={fmt(p).replace(contact, `<a class="lien" href="${mailtoUrl}">${contact}</a>`)} />
+            ))}
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Base>

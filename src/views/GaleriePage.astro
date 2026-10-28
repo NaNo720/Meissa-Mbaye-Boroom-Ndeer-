@@ -1,0 +1,46 @@
+---
+import Base from '@/layouts/Base.astro';
+import Galerie from '@/components/Galerie.astro';
+import { href, ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    titre: 'Galerie photos',
+    description: 'Photos de Meïssa Mbaye à télécharger pour la presse et les programmateurs : scène, portraits, ateliers.',
+    kicker: 'Espace pro · Photos',
+    retour: 'Retour à l’espace pro',
+  },
+  en: {
+    titre: 'Photo gallery',
+    description: 'Photos of Meïssa Mbaye to download for press and programmers: on stage, portraits, workshops.',
+    kicker: 'Press & pro · Photos',
+    retour: 'Back to the pro area',
+  },
+}[lang];
+---
+
+<Base lang={lang} title={t.titre} description={t.description}>
+  <section class="bg-noir text-creme">
+    <div class="container-site pb-12 pt-10 sm:pt-14">
+      <a href={href(lang, 'pro')} class="inline-block py-2 text-sm text-creme/80 hover:text-creme">← {t.retour}</a>
+      <p class="kicker mt-6 text-or">{t.kicker}</p>
+      <h1 class="mt-4 text-5xl sm:text-7xl">{t.titre}</h1>
+    </div>
+  </section>
+
+  <div class="container-site py-12 sm:py-16">
+    <Galerie lang={lang} mode="complete" />
+  </div>
+
+  <div class="container-site pb-16 sm:pb-20">
+    <div class="flex flex-col gap-4 rounded-lg bg-sable p-6 sm:flex-row sm:items-center sm:justify-between">
+      <p class="font-serif text-2xl">{ui.commun.programmateursTitre[lang]}</p>
+      <a href={href(lang, 'pro')} class="btn btn-or self-start sm:self-auto">{ui.commun.ouvrirPro[lang]}</a>
+    </div>
+  </div>
+</Base>

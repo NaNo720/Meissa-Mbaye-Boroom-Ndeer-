@@ -1,0 +1,147 @@
+---
+import Base from '@/layouts/Base.astro';
+import Dates from '@/components/Dates.astro';
+import BandeauTournee from '@/components/BandeauTournee.astro';
+import { datesAVenir, datesPassees } from '@/data/tournee';
+import { scenes } from '@/data/artiste';
+import { href, type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    titre: 'Tournée',
+    description: 'La tournée de Meïssa Mbaye en France, en Belgique et à l’international : Meïssa Mbaye Boroom Ndeer et Meïssa conteur, dates passées et lieux qui l’ont accueilli.',
+    kicker: 'Agenda 2026 – 2027',
+    intro: 'Concerts et contes en France, en Belgique et à l’international.',
+    aVenir: 'Dates à venir',
+    filtre: 'Filtrer par spectacle',
+    toutes: 'Toutes',
+    conteur: 'Conteur',
+    archives: 'Dates passées',
+    aucuneArchive: 'Les dates passées seront archivées ici automatiquement.',
+    aucuneFiltre: 'Aucune date annoncée pour ce spectacle pour le moment.',
+    scenesTitre: 'Ils l’ont accueilli',
+    scenesIntro: 'Instituts français, festivals et salles, en Afrique, en Europe et aux Amériques.',
+    accueillir: 'Vous souhaitez accueillir Meïssa ?',
+    reserver: 'Réserver un spectacle',
+  },
+  en: {
+    titre: 'Tour',
+    description: 'Meïssa Mbaye’s tour in France, Belgium and worldwide: Meïssa Mbaye Boroom Ndeer and Meïssa the storyteller, past dates and venues where he has performed.',
+    kicker: 'Calendar 2026 – 2027',
+    intro: 'Concerts and storytelling in France, Belgium and worldwide.',
+    aVenir: 'Upcoming dates',
+    filtre: 'Filter by show',
+    toutes: 'All',
+    conteur: 'Storyteller',
+    archives: 'Past dates',
+    aucuneArchive: 'Past dates will be archived here automatically.',
+    aucuneFiltre: 'No dates announced for this show yet.',
+    scenesTitre: 'Where he has performed',
+    scenesIntro: 'Instituts français, festivals and venues in Africa, Europe and the Americas.',
+    accueillir: 'Would you like to host Meïssa?',
+    reserver: 'Book a show',
+  },
+}[lang];
+
+const aVenir = datesAVenir();
+const passees = datesPassees();
+const filtres = [
+  { id: 'toutes', label: t.toutes },
+  { id: 'borom-ndeer', label: 'Meïssa Mbaye Boroom Ndeer' },
+  { id: 'conteur', label: t.conteur },
+];
+---
+
+<Base lang={lang} title={t.titre} description={t.description}>
+  <section class="bg-noir text-creme">
+    <div class="container-site pb-14 pt-12 sm:pt-16">
+      <p class="kicker text-or">{t.kicker}</p>
+      <h1 class="mt-4 text-6xl sm:text-7xl">{t.titre}</h1>
+      <p class="mt-5 max-w-xl text-creme/85">{t.intro}</p>
+    </div>
+  </section>
+
+  <BandeauTournee lang={lang} />
+
+  <section class="container-site py-16 sm:py-20" aria-labelledby={aVenir.length ? 'avenir-titre' : 'archives-titre'}>
+    {
+      // « Dates à venir » masquées tant qu'aucune date n'est annoncée.
+      aVenir.length > 0 && (
+        <>
+          <div class="mb-20">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+              <h2 id="avenir-titre" class="text-4xl sm:text-5xl">{t.aVenir}</h2>
+              <div class="flex flex-wrap gap-2" role="group" aria-label={t.filtre} data-filtres hidden>
+                {filtres.map((f, i) => (
+                  <button type="button" class="btn btn-contour-sombre aria-pressed:bg-noir aria-pressed:text-creme" aria-pressed={i === 0 ? 'true' : 'false'} data-filtre={f.id}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div class="mt-8" data-liste-dates>
+              <Dates lang={lang} dates={aVenir} entete={false} />
+            </div>
+            <p class="mt-6 text-texte-2" data-vide hidden>{t.aucuneFiltre}</p>
+          </div>
+        </>
+      )
+    }
+
+    <h2 id="archives-titre" class="text-3xl">{t.archives}</h2>
+    {passees.length ? <div class="mt-6"><Dates lang={lang} dates={passees} entete={false} /></div> : <p class="mt-4 text-texte-2">{t.aucuneArchive}</p>}
+
+    <!-- Lieux sans date précise (medias-sources/Word/Listes des festivals.docx), à dater au fur et à mesure -->
+    <h2 class="mt-20 text-3xl">{t.scenesTitre}</h2>
+    <p class="mt-3 text-texte-2">{t.scenesIntro}</p>
+    <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        scenes.map((g) => (
+          <div class="border-t border-noir/30 pt-4">
+            <h3 class="font-sans text-sm font-semibold">{g.groupe[lang]}</h3>
+            <ul class="mt-3 space-y-2" role="list">
+              {g.lieux.map((l) => <li class="font-serif text-xl leading-snug" set:html={fmt(l)} />)}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Bandeau de réservation avant le pied de page, comme sur les pages Biographie et Conteur -->
+  <section class="zone-pale bg-terracotta text-carte" aria-labelledby="accueillir-titre">
+    <div class="container-site flex flex-col gap-6 py-14 sm:flex-row sm:items-center sm:justify-between">
+      <h2 id="accueillir-titre" class="text-4xl sm:text-5xl">{t.accueillir}</h2>
+      <a href={href(lang, 'contact')} class="btn btn-clair self-start sm:self-auto">{t.reserver}</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Filtre progressif : sans JavaScript, toutes les dates restent visibles.
+  const groupe = document.querySelector<HTMLElement>('[data-filtres]');
+  const lignes = [...document.querySelectorAll<HTMLElement>('[data-liste-dates] [data-offre]')];
+  const vide = document.querySelector<HTMLElement>('[data-vide]');
+  if (groupe && lignes.length) {
+    groupe.hidden = false;
+    groupe.querySelectorAll<HTMLButtonElement>('[data-filtre]').forEach((bouton) => {
+      bouton.addEventListener('click', () => {
+        const filtre = bouton.dataset.filtre;
+        groupe.querySelectorAll('[data-filtre]').forEach((b) => b.setAttribute('aria-pressed', String(b === bouton)));
+        let visibles = 0;
+        lignes.forEach((l) => {
+          const ok = filtre === 'toutes' || l.dataset.offre === filtre;
+          l.hidden = !ok;
+          if (ok) visibles++;
+        });
+        if (vide) vide.hidden = visibles > 0;
+      });
+    });
+  }
+</script>

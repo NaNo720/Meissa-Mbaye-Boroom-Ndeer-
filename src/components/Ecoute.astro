@@ -1,0 +1,21 @@
+---
+import Lecteur from './Lecteur.astro';
+import type { Lang } from '@/i18n';
+
+/** Liste de morceaux à écouter (fichiers de la médiathèque), un lecteur par morceau. */
+interface Props {
+  lang: Lang;
+  pistes: { titre: string; detail: string; fichier: string; duree: number }[];
+}
+const { lang, pistes } = Astro.props;
+---
+
+<ul class="grid gap-4 md:grid-cols-3" role="list">
+  {
+    pistes.map((p) => (
+      <li>
+        <Lecteur lang={lang} titre={p.titre} detail={p.detail} fichier={p.fichier} duree={p.duree} class="h-full" />
+      </li>
+    ))
+  }
+</ul>

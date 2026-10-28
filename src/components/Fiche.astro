@@ -1,0 +1,20 @@
+---
+import { fmt } from '@/lib/text';
+
+/** Grille « Formation / Durée / Public / Tarif » des pages spectacle. */
+interface Props {
+  items: { label: string; valeur: string }[];
+}
+const { items } = Astro.props;
+---
+
+<dl class="grid grid-cols-2 content-start gap-x-8 self-start sm:gap-x-12">
+  {
+    items.map((i) => (
+      <div class="border-b border-bordure py-4 [&:nth-child(-n+2)]:border-t">
+        <dt class="kicker text-[0.65rem] text-texte-2">{i.label}</dt>
+        <dd class="mt-1 text-sm" set:html={fmt(i.valeur)} />
+      </div>
+    ))
+  }
+</dl>

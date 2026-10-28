@@ -1,0 +1,312 @@
+---
+import Base from '@/layouts/Base.astro';
+import Social from '@/components/Social.astro';
+import Video from '@/components/Video.astro';
+import Ecoute from '@/components/Ecoute.astro';
+import Dates from '@/components/Dates.astro';
+import { datesAVenir } from '@/data/tournee';
+import Discographie from '@/components/Discographie.astro';
+import Programmer from '@/components/Programmer.astro';
+import Photo from '@/components/Photo.astro';
+import { bandeauReperes, biographie } from '@/data/biographie';
+import { citationsBoromNdeer, scenes } from '@/data/artiste';
+import { photos } from '@/data/photos';
+import { spectacles } from '@/data/spectacles';
+import { href, type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+// Morceaux complets, réencodés en 128 kbit/s (originaux : medias-sources/music).
+import femmeNoire from '@/assets/audio/femme-noire.mp3';
+import joal from '@/assets/audio/joal.mp3';
+import dex from '@/assets/audio/dex-allonymous.mp3';
+
+/**
+ * Boroom Ndeer : nom d'artiste de Meïssa Mbaye musicien. La page réunit le musicien et le concert,
+ * dans l'ordre du parcours d'un programmateur : repères → écouter → le concert → presse → parcours → réserver.
+ * Alternance de sections sombres et claires, comme les lumières d'une scène (charte « griot contemporain »).
+ */
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = spectacles['borom-ndeer'];
+
+const t = {
+  fr: {
+    description:
+      'Meïssa Mbaye Boroom Ndeer, musicien : poète, musicien et passeur de paroles, il fait dialoguer Senghor, les poètes de la Harlem Renaissance et Paul Valéry. Écoute, concert à programmer en solo, en duo ou avec sa tribu, parcours et discographie.',
+    kicker: 'Griot · Chanteur-poète',
+    // Résumé tiré de la biographie (src/data/biographie.ts).
+    intro:
+      'Né à Dakar dans une famille de griots, dépositaire de la voix du Ndeer, le tambour royal des royaumes wolofs, Meïssa Mbaye porte la parole africaine depuis près de quarante ans, de Dakar à Atlanta, de Tombouctou à Munich. Il met en musique Senghor, les poètes de la Harlem Renaissance et Paul Valéry, un travail salué par le Prix IFCIC de l’UNESCO.',
+    formulesTitre: 'Trois formules',
+    dureeLabel: 'Durée',
+    formules: [
+      {
+        titre: 'Solo',
+        texte: 'Meïssa est seul en scène. Il accompagne sa parole à la guitare et aux percussions, faisant résonner bongos, calebasses dans l’eau et autres instruments aux timbres singuliers. Une forme intime où la proximité avec le public donne toute sa force aux mots.',
+      },
+      {
+        titre: 'Duo',
+        texte: 'Il partage la scène avec les musiciens Sylvain Dubrez ou Germain Du Feu. Le dialogue entre la voix, les cordes et l’improvisation ouvre un espace d’écoute où poésie et musique se répondent avec finesse et complicité.',
+      },
+      {
+        titre: 'Avec sa tribu',
+        texte: 'Entouré de basse, batterie, percussions, guitare, piano et ngoni, Meïssa déploie un univers généreux où l’émotion de la poésie rencontre l’énergie du concert. Un moment à la fois sensible et chaleureux, qui invite autant à l’écoute qu’au partage.',
+      },
+    ],
+    scenesTitre: 'Ils l’ont accueilli',
+    scenesIntro: 'Instituts français, festivals et salles, en Afrique, en Europe et aux Amériques.',
+    sommaire: 'Sur cette page',
+    rubriques: { parcours: 'Biographie', discographie: 'Discographie', ecouter: 'Écouter', concert: 'Le concert', presse: 'Presse', programmer: 'Programmer' },
+    reperes: 'Repères',
+    ecouter: 'Écouter',
+    ecouterIntro: 'Trois poèmes chantés, extraits de ses albums.',
+    spectacleTitre: 'Le concert',
+    spectacle: [
+      'Meïssa Mbaye propose un spectacle puisé dans l’univers de ses trois albums de poésie. Sa voix y fait dialoguer les mots de Léopold Sédar Senghor, des grands poètes de la Harlem Renaissance et de Paul Valéry, notamment à travers des textes issus du recueil Corona & Coronilla.',
+      'À la croisée de la poésie, de la musique et du récit, ce spectacle est une invitation au voyage. Les textes prennent vie dans une création musicale originale où les sonorités africaines rencontrent le jazz, le blues et la chanson poétique.',
+      'Chaque concert peut se prolonger par un atelier pédagogique autour des poèmes, pour les lycées et le public adulte.',
+    ],
+    pistes: [
+      { titre: 'Femme noire', detail: 'Poème de Senghor · Entre Seine et Sine (2005)', fichier: femmeNoire, duree: 232 },
+      { titre: 'Joal', detail: 'Poème de Senghor · Entre Seine et Sine (2005)', fichier: joal, duree: 232 },
+      { titre: 'Dex', detail: 'Avec Allonymous · Back to Africa (2007)', fichier: dex, duree: 255 },
+    ],
+    presse: 'Ils en parlent',
+    toutePresse: 'Toute la revue de presse',
+    enImages: 'En images',
+    parcoursTitre: 'Biographie',
+    programmer: 'Programmer Meïssa Mbaye Boroom Ndeer',
+    reserver: 'Réserver ce concert',
+  },
+  en: {
+    description:
+      'Meïssa Mbaye Boroom Ndeer, musician: poet, musician and carrier of words, bringing Senghor, the poets of the Harlem Renaissance and Paul Valéry into dialogue. Listen, book the concert solo, as a duo or with his band, career and discography.',
+    kicker: 'Griot · Singer-poet',
+    intro:
+      'Born in Dakar into a family of griots, entrusted with the voice of the Ndeer, the royal drum of the Wolof kingdoms, Meïssa Mbaye has carried the African spoken word for nearly forty years, from Dakar to Atlanta, from Timbuktu to Munich. He sets Senghor, the poets of the Harlem Renaissance and Paul Valéry to music — work honoured with the UNESCO IFCIC Prize.',
+    formulesTitre: 'Three formats',
+    dureeLabel: 'Duration',
+    formules: [
+      {
+        titre: 'Solo',
+        texte: 'Meïssa alone on stage. He accompanies his words on guitar and percussion — bongos, calabashes in water and other instruments with unusual tones. An intimate format where closeness to the audience gives the words their full power.',
+      },
+      {
+        titre: 'Duo',
+        texte: 'He shares the stage with musicians Sylvain Dubrez or Germain Du Feu. The dialogue between voice, strings and improvisation opens a listening space where poetry and music answer each other with finesse and complicity.',
+      },
+      {
+        titre: 'With his band',
+        texte: 'Surrounded by bass, drums, percussion, guitar, piano and ngoni, Meïssa unfolds a generous world where the emotion of poetry meets the energy of a concert. A moment both tender and warm, as much for listening as for sharing.',
+      },
+    ],
+    scenesTitre: 'Where he has performed',
+    scenesIntro: 'Instituts français, festivals and venues in Africa, Europe and the Americas.',
+    sommaire: 'On this page',
+    rubriques: { parcours: 'Biography', discographie: 'Discography', ecouter: 'Listen', concert: 'The concert', presse: 'Press', programmer: 'Book' },
+    reperes: 'Highlights',
+    ecouter: 'Listen',
+    ecouterIntro: 'Three sung poems from his albums.',
+    spectacleTitre: 'The concert',
+    spectacle: [
+      'Meïssa Mbaye offers a show drawn from the world of his three albums of poetry. His voice brings into dialogue the words of Léopold Sédar Senghor, the great poets of the Harlem Renaissance and Paul Valéry, notably through texts from the collection Corona & Coronilla.',
+      'At the crossroads of poetry, music and storytelling, the show is an invitation to travel. The texts come alive in an original score where African sounds meet jazz, blues and poetic song.',
+      'Each concert can be extended with a workshop on the poems, for secondary schools and adult audiences.',
+    ],
+    pistes: [
+      { titre: 'Femme noire', detail: 'Poem by Senghor · Entre Seine et Sine (2005)', fichier: femmeNoire, duree: 232 },
+      { titre: 'Joal', detail: 'Poem by Senghor · Entre Seine et Sine (2005)', fichier: joal, duree: 232 },
+      { titre: 'Dex', detail: 'With Allonymous · Back to Africa (2007)', fichier: dex, duree: 255 },
+    ],
+    presse: 'In the press',
+    toutePresse: 'Full press review',
+    enImages: 'In pictures',
+    parcoursTitre: 'Biography',
+    programmer: 'Book Meïssa Mbaye Boroom Ndeer',
+    reserver: 'Book this concert',
+  },
+}[lang];
+
+const rubriques = Object.entries(t.rubriques) as [keyof typeof t.rubriques, string][];
+const reserverUrl = `${href(lang, 'contact')}?offre=borom-ndeer`;
+---
+
+<Base lang={lang} title="Boroom Ndeer" description={t.description}>
+  <!-- 1. En-tête (sombre) -->
+  <section class="bg-noir text-creme">
+    <div class="container-site pb-14 pt-12 sm:pt-16">
+      <p class="kicker text-or">{t.kicker}</p>
+      <h1 class="mt-4 text-5xl leading-[1.05] sm:text-7xl">
+        Meïssa Mbaye <span class="block text-3xl italic text-or sm:inline sm:text-5xl">(Boroom Ndeer)</span>
+      </h1>
+      <p class="mt-5 max-w-2xl text-creme/85">{t.intro}</p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href={reserverUrl} class="btn btn-or">{t.reserver}</a>
+        <a href="#ecouter" class="btn btn-contour-clair">{t.ecouter}</a>
+      </div>
+      <Social lang={lang} libelle class="mt-7" />
+      <Video lang={lang} youtubeId={s.captation.youtubeId} label={s.captation.libelle[lang]} debut={s.captation.debut} class="mt-10" />
+    </div>
+  </section>
+
+  <!-- Sommaire, fixé sous l'en-tête du site -->
+  <nav aria-label={t.sommaire} class="sticky top-16 z-30 border-b border-bordure bg-creme/95 backdrop-blur">
+    <ul class="container-site flex gap-1 overflow-x-auto py-2 text-sm [scrollbar-width:none]" role="list">
+      {
+        rubriques.map(([id, label]) => (
+          <li class="shrink-0">
+            <a href={`#${id}`} class="inline-flex min-h-11 items-center rounded-full px-4 hover:bg-sable">{label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- 2. Biographie (texte fourni par Nano) à côté du portrait -->
+  <section id="parcours" class="container-site grid scroll-mt-32 gap-10 py-16 sm:py-20 md:grid-cols-[2fr_3fr]" aria-labelledby="parcours-titre">
+    <div>
+      <div class="md:sticky md:top-32">
+        <Photo photo={photos.guitareMer} lang={lang} sizes="(min-width: 768px) 40vw, 100vw" class="aspect-[4/5] w-full rounded-lg" />
+      </div>
+    </div>
+    <div class="max-w-prose">
+      <h2 id="parcours-titre" class="text-4xl sm:text-5xl">{t.parcoursTitre}</h2>
+      {
+        biographie.map((sec, i) => (
+          <section class:list={[i === 0 ? 'mt-8' : 'mt-10']}>
+            <h3 class:list={['text-3xl', i === 0 && 'text-terracotta']}>{sec.titre[lang]}</h3>
+            {sec.paragraphes.map((p) => (
+              <p class:list={['mt-4 leading-relaxed', i === 0 && 'font-serif text-xl leading-snug sm:text-2xl']}>{p[lang]}</p>
+            ))}
+          </section>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 2. Repères -->
+  <section class="border-b border-bordure bg-carte" aria-label={t.reperes}>
+    <dl class="container-site grid grid-cols-2 lg:grid-cols-4">
+      {
+        bandeauReperes.map((r) => (
+          <div class="border-bordure py-6 pr-4 [&:nth-child(n+3)]:border-t lg:border-l lg:pl-6 lg:first:border-l-0 lg:first:pl-0 lg:[&:nth-child(n+3)]:border-t-0">
+            <dt class="font-serif text-2xl">{r.valeur[lang]}</dt>
+            <dd class="mt-1 text-xs text-texte-2">{r.detail[lang]}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <!-- 3. Discographie : son œuvre -->
+  <section id="discographie" class="scroll-mt-32 bg-sable">
+    <div class="container-site py-16 sm:py-20">
+      <Discographie lang={lang} />
+    </div>
+  </section>
+
+  <!-- 4. Écouter (sombre, comme une scène) -->
+  <section id="ecouter" class="scroll-mt-32 bg-scene text-creme" aria-labelledby="ecouter-titre">
+    <div class="container-site py-16 sm:py-20">
+      <h2 id="ecouter-titre" class="text-4xl sm:text-5xl">{t.ecouter}</h2>
+      <p class="mt-3 text-creme/75">{t.ecouterIntro}</p>
+      <div class="mt-8 text-noir"><Ecoute lang={lang} pistes={t.pistes} /></div>
+    </div>
+  </section>
+
+  <!-- Photos : respiration entre l'écoute et le concert -->
+  <section class="container-site pt-16 sm:pt-20" aria-labelledby="images-titre">
+    <h2 id="images-titre" class="sr-only">{t.enImages}</h2>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <Photo photo={photos.micro} lang={lang} sizes="(min-width: 640px) 33vw, 100vw" class="aspect-[4/3] w-full rounded-lg" />
+      <Photo photo={photos.duoPortrait} lang={lang} sizes="(min-width: 640px) 33vw, 100vw" class="aspect-[4/3] w-full rounded-lg" />
+      <Photo photo={photos.visage} lang={lang} sizes="(min-width: 640px) 33vw, 100vw" class="aspect-[4/3] w-full rounded-lg" />
+    </div>
+  </section>
+
+  <!-- 5. Le concert : ce que l'on peut programmer -->
+  <section id="concert" class="container-site grid scroll-mt-32 gap-y-8 py-16 sm:py-20" aria-labelledby="concert-titre">
+    <h2 id="concert-titre" class="text-4xl sm:text-5xl">{t.spectacleTitre}</h2>
+    <!-- Fiche (instruments, public, lieux, tarif) retirée à la demande de Nano le 26/10/2026 -->
+    <div class="max-w-3xl">
+      {t.spectacle.map((p, i) => <p class:list={['text-texte-2', i > 0 && 'mt-5']}>{p}</p>)}
+      <a href={reserverUrl} class="btn btn-or mt-8">{t.reserver}</a>
+    </div>
+
+    <div>
+      <h3 class="text-3xl">{t.formulesTitre}</h3>
+      <ul class="mt-6 grid gap-4 md:grid-cols-3" role="list">
+        {
+          t.formules.map((f) => (
+            <li class="carte flex flex-col border-t-2 border-t-terracotta p-6">
+              <p class="font-serif text-3xl">{f.titre}</p>
+              <p class="mt-3 text-sm leading-relaxed text-texte-2" set:html={fmt(f.texte)} />
+              <!-- Durée affichée dans chaque formule (1 h 30 confirmée pour le concert) -->
+              <div class="mt-auto pt-5">
+                <p class="border-t border-bordure pt-4 text-sm">
+                  <span class="kicker mr-2 text-[0.65rem] text-texte-2">{t.dureeLabel}</span>
+                  <span class="font-medium" set:html={fmt(s.duree?.[lang] ?? '[DURÉE]')} />
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. Ils en parlent, puis Ils l'ont accueilli : la preuve avant la réservation -->
+  <section id="presse" class="scroll-mt-32 bg-sable" aria-labelledby="presse-titre">
+    <div class="container-site py-16 sm:py-20">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 id="presse-titre" class="text-4xl sm:text-5xl">{t.presse}</h2>
+        <a href={href(lang, 'pro') + '#presse'} class="lien py-2 text-sm text-terracotta">{t.toutePresse} →</a>
+      </div>
+      <ul class="mt-10 grid gap-x-10 gap-y-8 md:grid-cols-3" role="list">
+        {
+          citationsBoromNdeer.map((c) => (
+            <li>
+              <figure class="border-t-2 border-terracotta pt-5">
+                <blockquote class="font-serif text-3xl leading-tight" lang={c.lang ?? 'fr'}>« {c.texte} »</blockquote>
+                <figcaption class="mt-3 text-xs text-texte-2">{c.media}</figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Ils l'ont accueilli : lieux et festivals -->
+  <section class="container-site pt-16 sm:pt-20" aria-labelledby="scenes-titre">
+    <h2 id="scenes-titre" class="text-4xl sm:text-5xl">{t.scenesTitre}</h2>
+    <p class="mt-3 text-texte-2">{t.scenesIntro}</p>
+    <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        scenes.map((g) => (
+          <div class="border-t border-noir/30 pt-4">
+            <h3 class="font-sans text-sm font-semibold">{g.groupe[lang]}</h3>
+            <ul class="mt-3 space-y-2" role="list">
+              {g.lieux.map((l) => <li class="font-serif text-xl leading-snug" set:html={fmt(l)} />)}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 7. Dates puis réservation -->
+  {
+    // Masquées tant qu'aucune date n'est annoncée.
+    datesAVenir('borom-ndeer').length > 0 && (
+      <section class="container-site py-16 sm:py-20">
+        <Dates lang={lang} offre="borom-ndeer" />
+      </section>
+    )
+  }
+
+  <div id="programmer" class="scroll-mt-32">
+    <Programmer lang={lang} offre="borom-ndeer" titre={t.programmer} bouton={t.reserver} />
+  </div>
+</Base>

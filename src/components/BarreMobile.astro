@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { whatsappUrl } from '@/data/site';
+import { href, ui, type Lang } from '@/i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<!-- Barre d'action fixe sur mobile (maquette page 8) -->
+<div class="fixed inset-x-0 bottom-0 z-30 border-t border-creme/10 bg-noir/95 px-4 py-3 backdrop-blur sm:hidden">
+  <div class="grid grid-cols-2 gap-3">
+    <a href={href(lang, 'contact')} class="btn btn-or">{ui.nav.reserver[lang]}</a>
+    <a href={whatsappUrl} target="_blank" rel="noopener" class="btn btn-contour-clair">
+      <Icon name="whatsapp" class="size-4" />
+      {ui.commun.whatsapp[lang]}
+    </a>
+  </div>
+</div>

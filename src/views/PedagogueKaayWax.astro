@@ -1,0 +1,150 @@
+---
+import Base from '@/layouts/Base.astro';
+import Photo from '@/components/Photo.astro';
+import FilAriane from '@/components/FilAriane.astro';
+import { photos } from '@/data/photos';
+import { transmettreLaParole } from '@/data/biographie';
+import { kaayWax } from '@/data/pedagogue';
+import { href, ui, type Lang } from '@/i18n';
+
+/**
+ * Kaay Wax — Meïssa professeur de conte (sous-page de /pedagogue).
+ * Présentation du projet fournie par Nano le 29/10/2026 ; la méthode de l'Arbre à Palabre
+ * reste présentée pour les interventions en milieu scolaire.
+ */
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t = {
+  fr: {
+    description:
+      'Kaay Wax, « Viens, ta parole t’attend » : un spectacle de paroles partagées mis en scène par Meïssa Mbaye, et une école de la déclamation ouverte à tous, jeunes et adultes.',
+    ariane: 'Fil d’Ariane',
+    sommaire: 'Sur cette page',
+    rubriques: { projet: 'Le projet', ecole: 'L’école de la déclamation', ecoles: 'Dans les écoles' },
+    participer: 'Participer à Kaay Wax',
+    ecolesKicker: 'Dans les écoles',
+    ecolesIntro: 'Avec les élèves, Kaay Wax prend la forme de l’Arbre à Palabre.',
+    genies: 'Le spectacle Génies, pour les écoles et les médiathèques',
+    bokkBaat: 'Découvrir Bokk Baat, le projet de chant',
+    finTexte: 'Pour participer ou accueillir le projet, écrivez-nous. Réponse sous 48 h.',
+  },
+  en: {
+    description:
+      'Kaay Wax, “Come, your words are waiting”: a show of shared words staged by Meïssa Mbaye, and a school of declamation open to everyone, young people and adults.',
+    ariane: 'Breadcrumb',
+    sommaire: 'On this page',
+    rubriques: { projet: 'The project', ecole: 'The school of declamation', ecoles: 'In schools' },
+    participer: 'Join Kaay Wax',
+    ecolesKicker: 'In schools',
+    ecolesIntro: 'With pupils, Kaay Wax takes the form of the Palaver Tree.',
+    genies: 'The show Génies, for schools and libraries',
+    bokkBaat: 'Discover Bokk Baat, the singing project',
+    finTexte: 'To take part or host the project, write to us. Reply within 48 hours.',
+  },
+}[lang];
+
+const contact = `${href(lang, 'contact')}?offre=kaay-wax`;
+---
+
+<Base lang={lang} title={`${kaayWax.nom} · ${ui.nav.pedagogue[lang]}`} description={t.description}>
+  <!-- En-tête -->
+  <section class="zone-pale bg-nuit text-creme">
+    <div class="container-site grid gap-10 pb-14 pt-8 sm:pt-10 lg:grid-cols-2 lg:items-center">
+      <div>
+        <FilAriane label={t.ariane} etapes={[{ label: ui.nav.pedagogue[lang], href: href(lang, 'pedagogue') }, { label: kaayWax.nom }]} />
+        <p class="kicker mt-6 text-or">{kaayWax.kicker[lang]}</p>
+        <h1 class="mt-4 text-6xl sm:text-7xl">{kaayWax.nom}</h1>
+        <p class="mt-2 font-serif text-3xl italic text-or">{kaayWax.devise[lang]}</p>
+        <p class="mt-5 max-w-xl text-lg text-creme/90">{kaayWax.sousTitre[lang]}</p>
+        <a href={contact} class="btn btn-or mt-7">{t.participer}</a>
+      </div>
+      <!-- Galerie : meissa-mbaye-ateliers-01 (Nano, 29/10/2026) -->
+      <Photo photo={photos.spectacleSalle} lang={lang} sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[3/2] w-full rounded-lg" prioritaire />
+    </div>
+  </section>
+
+  <!-- Sommaire -->
+  <nav aria-label={t.sommaire} class="sticky top-16 z-30 border-b border-bordure bg-creme/95 backdrop-blur">
+    <ul class="container-site flex gap-1 overflow-x-auto py-2 text-sm [scrollbar-width:none]" role="list">
+      {
+        (Object.entries(t.rubriques) as [string, string][]).map(([id, label]) => (
+          <li class="shrink-0">
+            <a href={`#${id}`} class="inline-flex min-h-11 items-center rounded-full px-4 hover:bg-sable">{label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- Le projet : l'héritage, un texte une voix, des paroles au spectacle -->
+  <section id="projet" class="container-site scroll-mt-32 py-16 sm:py-20" aria-labelledby="projet-titre">
+    <h2 id="projet-titre" class="sr-only">{t.rubriques.projet}</h2>
+    <p class="max-w-4xl font-serif text-2xl leading-snug sm:text-3xl">{kaayWax.intro[lang]}</p>
+    <div class="mt-14 grid gap-10 md:grid-cols-2">
+      {
+        [kaayWax.texteVoix, kaayWax.spectacle].map((b) => (
+          <div class="border-t-2 border-[#1D6A80] pt-5">
+            <h3 class="text-3xl">{b.titre[lang]}</h3>
+            <p class="mt-4 leading-relaxed text-texte-2">{b.texte[lang]}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Une école de la déclamation + Pour qui -->
+  <section id="ecole" class="scroll-mt-32 bg-sable" aria-labelledby="ecole-titre">
+    <div class="container-site grid gap-12 py-16 sm:py-20 lg:grid-cols-[3fr_2fr]">
+      <div>
+        <h2 id="ecole-titre" class="text-4xl sm:text-5xl">{kaayWax.ecole.titre[lang]}</h2>
+        <p class="mt-4 text-texte-2">{kaayWax.ecole.intro[lang]}</p>
+        <ul class="mt-6 space-y-3" role="list">
+          {
+            kaayWax.ecole.items.map((item) => (
+              <li class="flex gap-3 border-t border-bordure pt-3">
+                <span class="mt-2 size-2 shrink-0 rounded-full bg-[#1D6A80]" aria-hidden="true" />
+                <span>{item[lang]}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="self-start rounded-lg bg-carte p-6 sm:p-8">
+        <h3 class="text-3xl">{kaayWax.pourQui.titre[lang]}</h3>
+        <p class="mt-4 leading-relaxed">{kaayWax.pourQui.texte[lang]}</p>
+        <a href={contact} class="btn mt-6 bg-[#1D6A80] !text-white hover:bg-[#1D6A80]/85 hover:shadow-md">{t.participer}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dans les écoles : la méthode de l'Arbre à Palabre -->
+  <section id="ecoles" class="container-site grid scroll-mt-32 gap-10 py-16 sm:py-20 md:grid-cols-2 md:items-center" aria-labelledby="ecoles-titre">
+    <div>
+      <p class="kicker text-[#1D6A80]">{t.ecolesKicker}</p>
+      <h2 id="ecoles-titre" class="mt-3 text-4xl sm:text-5xl">{transmettreLaParole.titre[lang]}</h2>
+      <p class="mt-4 text-texte-2">{t.ecolesIntro}</p>
+      {transmettreLaParole.paragraphes.map((p) => <p class="mt-4 leading-relaxed">{p[lang]}</p>)}
+      <a href={href(lang, 'conteur')} class="lien mt-6 inline-block py-2 text-sm text-[#1D6A80]">{t.genies} →</a>
+    </div>
+    <!-- Galerie : meissa-mbaye-ateliers-02 (Nano, 29/10/2026) -->
+    <Photo photo={photos.spectacleDuo} lang={lang} sizes="(min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-lg" />
+  </section>
+
+  <div class="container-site pb-10">
+    <a href={href(lang, 'pedagogue/bokk-baat')} class="lien py-2 text-sm text-terracotta">{t.bokkBaat} →</a>
+  </div>
+
+  <!-- Bandeau final -->
+  <section class="zone-pale bg-terracotta text-carte" aria-labelledby="fin-titre">
+    <div class="container-site grid gap-6 py-14 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <h2 id="fin-titre" class="text-4xl sm:text-5xl">{kaayWax.conclusion[lang]}</h2>
+        <p class="mt-3 text-sm text-carte/85">{t.finTexte}</p>
+      </div>
+      <a href={contact} class="btn btn-clair self-start md:self-auto">{t.participer}</a>
+    </div>
+  </section>
+</Base>

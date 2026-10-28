@@ -1,0 +1,260 @@
+---
+import Base from '@/layouts/Base.astro';
+import Social from '@/components/Social.astro';
+import Video from '@/components/Video.astro';
+import Dates from '@/components/Dates.astro';
+import { datesAVenir } from '@/data/tournee';
+import Programmer from '@/components/Programmer.astro';
+import Photo from '@/components/Photo.astro';
+import Icon from '@/components/Icon.astro';
+import Lecteur from '@/components/Lecteur.astro';
+import { photos } from '@/data/photos';
+// Introduction du livre lue par Meïssa (transcription à ajouter, exigence WCAG 1.2.1).
+import introGenies from '@/assets/audio/genies-introduction.mp3';
+import { presentationConteur } from '@/data/biographie';
+import { spectacles } from '@/data/spectacles';
+import { href, type Lang } from '@/i18n';
+import { fmt } from '@/lib/text';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = spectacles.conteur;
+
+// Liens du livre (EPK) ; boutique et dossier pédagogique à renseigner depuis l'administration.
+// Boutique : Fnac (lien donné par Nano le 23/10/2026).
+const livre = { achat: 'https://www.fnac.com/a18300919/Meissa-Mbaye-Mythologies-senegalaises', extrait: 'https://l.ead.me/beLeeS' };
+
+const t = {
+  fr: {
+    titre: 'Meïssa conteur',
+    description:
+      'Les génies du Sénégal : contes et chants en solo, dès 6 ans, autour du livre Génies (Saaraba Éditions). Pour festivals de conte, médiathèques et écoles.',
+    kicker: 'Conte musical · Dès 6 ans',
+    h1: 'Les contes de Fatou Dieure Seck',
+    intro:
+      'Enfant, Meïssa Mbaye écoutait sa grand-mère Fatou Dieure Seck lui conter, autour du feu, toutes sortes d’histoires : contes de sagesse, de ruse, d’animaux et de merveilleux. Il les raconte à son tour, entre calebasses dans l’eau, guitare et voix.',
+    reserver: 'Réserver ce spectacle',
+    ecoles: 'Écoles et médiathèques',
+    conteurKicker: 'Le conteur',
+    spectacleTitre: 'Le spectacle',
+    spectacle: [
+      'Génies est un spectacle de contes, de chants et de musique où Meïssa Mbaye, conteur issu d’une famille de griots, fait revivre sept créatures légendaires du Sénégal.',
+      'Un soir, le petit Yoro Dandio s’assoit auprès de sa grand-mère, Fatou Dieure Seck. Elle lui raconte les génies qui habitent le fleuve, la mer, la brousse et les villes. Avec elle, le public découvre des êtres tour à tour protecteurs, mystérieux et redoutables, et les pactes anciens qui les lient aux humains.',
+      'Entre mythes, traditions, folklore et poésie, le spectacle mêle la parole en français, des chants et poèmes en wolof et la musique jouée en direct par l’artiste. Il transmet un patrimoine oral vivant, comme il se transmet au Sénégal : de la bouche d’un ancien à l’oreille d’un enfant.',
+      'Le spectacle peut se prolonger par une lecture, une vente-dédicace du livre ou un atelier d’art oratoire.',
+    ],
+    citation:
+      'Ce projet est en hommage à ma grand-mère, Fatou Dieure Seck, qui m’a transmis ce patrimoine immatériel des mythes et légendes sénégalais et dont je suis le passeur de mots.',
+    livreKicker: 'Le livre',
+    livreTitre: 'Génies : créatures et mythologies du Sénégal',
+    livreTexte:
+      'Sept contes écrits par Meïssa Mbaye et illustrés par Sophie Le Hire, enregistrés en studio à Dakar avec le joueur de xalam Daraa Guisse et la comédienne Aminata Mbaye. Un QR code donne accès à l’écoute de tous les contes. Saaraba Éditions, 2023, distribué en France par Editis.',
+    livreBnf: 'Recensé par Takam Tikou, la revue jeunesse de la BnF · Sélection Opalivres 2026.',
+    acheter: 'Acheter le livre',
+    extrait: 'Écouter le livre entier ↗',
+    ecouterIntro: 'Écouter l’introduction',
+    introTitre: 'Introduction du livre Génies',
+    introDetail: 'Par Meïssa Mbaye · 3 min 42',
+    ecolesTexte: 'Un projet clé en main autour de l’oralité, du wolof et des mythes du Sénégal.',
+    formats: [
+      { titre: 'Spectacle', texte: 'Contes et chants pour une classe ou une salle de lecture.' },
+      { titre: 'Rencontre-dédicace', texte: 'Lecture du livre Génies et échange avec l’auteur.' },
+    ],
+    ateliersTitre: 'Ateliers et formations',
+    ateliersTexte: 'Prolonger le spectacle avec Kaay Wax et la méthode de l’Arbre à Palabre : les élèves deviennent conteurs à leur tour.',
+    ateliersLien: 'Voir la page Pédagogue',
+    passCulture: 'Collèges et lycées en France : [mention pass Culture, après vérification du référencement].',
+    programmer: 'Programmer le conteur',
+  },
+  en: {
+    titre: 'Meïssa the storyteller',
+    description:
+      'The spirits of Senegal: solo tales and songs for ages 6 and up, around the book Génies (Saaraba Éditions). For storytelling festivals, libraries and schools.',
+    kicker: 'Musical tale · Ages 6 and up',
+    h1: 'The tales of Fatou Dieure Seck',
+    intro:
+      'As a child, Meïssa Mbaye listened to his grandmother Fatou Dieure Seck telling him all kinds of stories by the fire: tales of wisdom, of cunning, of animals and of wonder. Now he tells them in turn, with calabashes in water, guitar and voice.',
+    reserver: 'Book this show',
+    ecoles: 'Schools and libraries',
+    conteurKicker: 'The storyteller',
+    spectacleTitre: 'The show',
+    spectacle: [
+      'Génies is a show of tales, songs and music in which Meïssa Mbaye, a storyteller from a family of griots, brings seven legendary creatures of Senegal back to life.',
+      'One evening, little Yoro Dandio sits down beside his grandmother, Fatou Dieure Seck. She tells him about the spirits who live in the river, the sea, the bush and the towns. With her, the audience meets beings by turns protective, mysterious and fearsome, and the ancient pacts that bind them to humans.',
+      'Between myth, tradition, folklore and poetry, the show blends spoken French, songs and poems in Wolof, and music played live by the artist. It passes on a living oral heritage the way it is passed on in Senegal: from the mouth of an elder to the ear of a child.',
+      'The show can be extended with a reading, a book signing or an oratory workshop.',
+    ],
+    citation:
+      'This project is a tribute to my grandmother, Fatou Dieure Seck, who passed on to me this intangible heritage of Senegalese myths and legends, which I now carry forward.',
+    livreKicker: 'The book',
+    livreTitre: 'Génies : créatures et mythologies du Sénégal',
+    livreTexte:
+      'Seven tales written by Meïssa Mbaye and illustrated by Sophie Le Hire, recorded in a Dakar studio with xalam player Daraa Guisse and actress Aminata Mbaye. A QR code gives access to audio of every tale. Saaraba Éditions, 2023 (in French), distributed in France by Editis.',
+    livreBnf: 'Reviewed by Takam Tikou, the children’s literature journal of the BnF · Opalivres 2026 selection.',
+    acheter: 'Buy the book',
+    extrait: 'Listen to the whole book ↗',
+    ecouterIntro: 'Listen to the introduction',
+    introTitre: 'Introduction to the book Génies',
+    introDetail: 'By Meïssa Mbaye · 3 min 42 · in French',
+    ecolesTexte: 'A ready-to-run project around oral tradition, the Wolof language and the myths of Senegal.',
+    formats: [
+      { titre: 'Show', texte: 'Tales and songs for a class or a reading room.' },
+      { titre: 'Reading and signing', texte: 'A reading from Génies and a conversation with the author.' },
+    ],
+    ateliersTitre: 'Workshops and training',
+    ateliersTexte: 'Extend the show with Kaay Wax and the Palaver Tree method: pupils become storytellers in turn.',
+    ateliersLien: 'See the Teacher page',
+    passCulture: 'Secondary schools in France: [pass Culture mention, once the listing is verified].',
+    programmer: 'Book the storyteller',
+  },
+}[lang];
+
+const btnLivre = (url: string, label: string, classe: string) => ({ url, label, classe });
+---
+
+<Base lang={lang} title={t.titre} description={t.description}>
+  <section class="zone-pale bg-nuit text-creme">
+    <div class="container-site grid gap-10 pb-14 pt-12 sm:pt-16 lg:grid-cols-2 lg:items-center">
+      <div>
+        <p class="kicker text-or">{t.kicker}</p>
+        <h1 class="mt-4 text-5xl leading-[1.05] sm:text-6xl">{t.h1}</h1>
+        <p class="mt-5 max-w-xl text-creme/85">{t.intro}</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href={`${href(lang, 'contact')}?offre=conteur`} class="btn btn-or">{t.reserver}</a>
+          <a href="#introduction" class="btn btn-contour-clair" data-lecteur-lancer="introduction">
+            <Icon name="lecture" class="size-4" />
+            {t.ecouterIntro}
+          </a>
+          <a href="#ecoles" class="btn btn-contour-clair">{t.ecoles}</a>
+        </div>
+        <Social lang={lang} libelle class="mt-7" />
+      </div>
+      {
+        // Photo à l'Institut français du Sénégal, en attendant la captation vidéo du conte.
+        s.captation.youtubeId ? (
+          <Video lang={lang} youtubeId={s.captation.youtubeId} label={s.captation.libelle[lang]} tone="indigo" />
+        ) : (
+          <Photo
+            photo={photos.conteurPublic}
+            lang={lang}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            class="aspect-[3/2] w-full rounded-lg"
+            prioritaire
+          />
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Présentation du conteur : la grand-mère, la parole vivante, le livre et le spectacle -->
+  <section class="border-b border-bordure" aria-labelledby="conteur-titre">
+    <div class="container-site grid gap-8 py-16 sm:py-20 md:grid-cols-[1fr_2fr]">
+      <div>
+        <p class="kicker text-indigo">{t.conteurKicker}</p>
+        <h2 id="conteur-titre" class="mt-3 text-4xl sm:text-5xl">{presentationConteur.titre[lang]}</h2>
+      </div>
+      <div class="max-w-prose">
+        {
+          presentationConteur.paragraphes.map((p, i) => (
+            <p class:list={[i === 0 ? 'font-serif text-2xl leading-snug sm:text-3xl' : 'mt-5 leading-relaxed text-texte-2']}>{p[lang]}</p>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Le spectacle (à gauche) et le livre Génies (à droite) : la fiche technique a été retirée (Nano, 27/10/2026) -->
+  <section class="container-site grid gap-x-10 gap-y-8 py-16 sm:py-20 md:grid-cols-2" aria-labelledby="spectacle-titre">
+    <!-- Titre sur toute la largeur : le premier paragraphe et la carte du livre démarrent à la même hauteur -->
+    <h2 id="spectacle-titre" class="text-4xl sm:text-5xl md:col-span-2">{t.spectacleTitre}</h2>
+    <div>
+      {t.spectacle.map((p, i) => <p class:list={['text-texte-2', i > 0 && 'mt-5']} set:html={fmt(p)} />)}
+      <figure class="mt-8 border-l-2 border-indigo pl-5">
+        <blockquote class="font-serif text-xl italic leading-snug">« {t.citation} »</blockquote>
+        <figcaption class="mt-2 text-xs text-texte-2">Meïssa Mbaye</figcaption>
+      </figure>
+
+      <!-- Lecteur de l'introduction et boutons du livre, sous le texte du spectacle (Nano, 27/10/2026) -->
+      <Lecteur
+        lang={lang}
+        id="introduction"
+        titre={t.introTitre}
+        detail={t.introDetail}
+        fichier={introGenies}
+        duree={222}
+        accent="petrole"
+        class="mt-10"
+      />
+      <div class="mt-5 flex flex-wrap gap-3">
+        {
+          // Boutons du livre en bleu pétrole fixe (Nano, 28/10/2026).
+          [
+            btnLivre(livre.achat, t.acheter, 'bg-[#1D6A80] !text-white hover:bg-[#1D6A80]/85 hover:shadow-md'),
+            btnLivre(livre.extrait, t.extrait, 'border border-[#1D6A80]/40 text-[#1D6A80] hover:border-[#1D6A80]'),
+          ].map((b) =>
+            b.url ? (
+              <a href={b.url} target="_blank" rel="noopener" class:list={['btn', b.classe]}>{b.label}</a>
+            ) : (
+              <span class:list={['btn', b.classe]} aria-disabled="true">{b.label}</span>
+            ),
+          )
+        }
+      </div>
+    </div>
+
+    <div id="livre" class="scroll-mt-32 self-start rounded-lg bg-sable p-6 sm:p-8" aria-labelledby="livre-titre">
+      <div class="flex justify-center rounded-lg bg-sable-fonce/50 p-6">
+        <Photo photo={photos.geniesCouverture} lang={lang} sizes="220px" class="w-full max-w-[220px] rounded shadow-lg" />
+      </div>
+      <p class="kicker mt-6 text-indigo">{t.livreKicker}</p>
+      <h3 id="livre-titre" class="mt-3 text-3xl"><span lang="fr">{t.livreTitre}</span></h3>
+      <p class="mt-4 text-sm" set:html={fmt(t.livreTexte)} />
+      <p class="mt-4 border-t border-bordure pt-4 text-xs text-texte-2">{t.livreBnf}</p>
+    </div>
+  </section>
+
+  <section id="ecoles" class="container-site scroll-mt-20 py-16 sm:py-20" aria-labelledby="ecoles-titre">
+    <h2 id="ecoles-titre" class="text-4xl sm:text-5xl">{t.ecoles}</h2>
+    <p class="mt-3 text-texte-2">{t.ecolesTexte}</p>
+
+    <!-- Les ateliers, l'Arbre à Palabre et le dossier pédagogue sont sur la page Pédagogue (Nano, 27/10/2026) -->
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      <!-- À gauche : photo du duo dans la salle aux murs rouges (Nano, 29/10/2026), cadrée sur les musiciens ;
+           à droite : galerie meissa-mbaye-conteur-03 (Institut français du Sénégal) -->
+      <Photo photo={photos.duoGuitaresSalleRouge} lang={lang} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[16/10] w-full rounded-lg object-[50%_62%]" />
+      <Photo photo={photos.conteurSceneGenies} lang={lang} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[16/10] w-full rounded-lg" />
+    </div>
+    <ul class="mt-4 grid gap-4 md:grid-cols-3" role="list">
+      {
+        t.formats.map((f) => (
+          <li class="carte p-5">
+            <h3 class="text-2xl">{f.titre}</h3>
+            <p class="mt-2 text-sm text-texte-2">{f.texte}</p>
+          </li>
+        ))
+      }
+      <li>
+        <a href={href(lang, 'pedagogue/kaay-wax')} class="carte group flex h-full flex-col border-indigo/40 p-5 hover:border-indigo">
+          <h3 class="text-2xl">{t.ateliersTitre}</h3>
+          <p class="mt-2 text-sm text-texte-2">{t.ateliersTexte}</p>
+          <p class="mt-auto pt-3 text-sm font-medium text-indigo group-hover:underline">{t.ateliersLien} →</p>
+        </a>
+      </li>
+    </ul>
+    <div class="mt-4 rounded-lg bg-indigo-pale p-4 text-sm">
+      <p set:html={fmt(t.passCulture)} />
+    </div>
+    {
+      // Masquées tant qu'aucune date n'est annoncée.
+      datesAVenir('conteur').length > 0 && (
+        <div class="mt-16">
+          <Dates lang={lang} offre="conteur" />
+        </div>
+      )
+    }
+  </section>
+
+  <Programmer lang={lang} offre="conteur" titre={t.programmer} bouton={t.reserver} />
+</Base>
