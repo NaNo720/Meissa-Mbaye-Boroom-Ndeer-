@@ -33,7 +33,7 @@
 
 ## 4. Stack technique (décidée)
 
-- Site + PWA : **Astro** + **Tailwind CSS**, TypeScript, hébergé sur **Netlify**.
+- Site + PWA : **Astro** + **Tailwind CSS**, TypeScript, hébergé chez **IONOS** (choix de Nano, 28/10/2026 ; redirections dans `public/.htaccess`). Les mentions « Netlify » ci-dessous datent du brief initial.
 - Back-office / API : **Directus** (open source) + **PostgreSQL**, stockage des médias.
 - Automatisations : **Directus Flows** (e-mails, alertes, récapitulatifs, webhook de rebuild Netlify, transcription vocale).
 - E-mails : Brevo. Statistiques : Plausible. Vidéos : YouTube / Vimeo (jamais sur le serveur).

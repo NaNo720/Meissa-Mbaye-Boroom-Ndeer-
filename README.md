@@ -19,7 +19,7 @@ Site officiel de **Meïssa Mbaye**, griot, chanteur-poète et conteur sénégala
 ## Technique
 
 - [Astro](https://astro.build) (site statique) + [Tailwind CSS](https://tailwindcss.com) 4, TypeScript
-- Hébergement prévu : Netlify (redirections dans `public/_redirects`)
+- Hébergement : IONOS (le contenu de `dist/` est mis en ligne après `npm run build`)
 - À venir : administration [Directus](https://directus.io) (demandes, tournée, contenus) et application mobile (PWA) pour l'artiste
 
 ## Lancer le site en local

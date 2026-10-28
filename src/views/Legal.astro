@@ -11,7 +11,7 @@ interface Props {
 }
 const { lang, page } = Astro.props;
 
-const hebergeur = site.mentions.hebergeur || '[À COMPLÉTER — prévu : Netlify]';
+const hebergeur = site.mentions.hebergeur || '[À COMPLÉTER]';
 const contact = site.bookingEmail;
 const aCompleter = (v: string) => v || '[À COMPLÉTER]';
 const ed = site.mentions.editeur;

@@ -55,7 +55,8 @@ export const site = {
       ville: '', // À compléter
       contact: '', // E-mail ou site à afficher, à compléter
     },
-    hebergeur: '', // À compléter (prévu : Netlify)
+    // Hébergeur choisi par Nano (28/10/2026). Raison sociale et adresse à vérifier sur la facture IONOS.
+    hebergeur: 'IONOS SARL — 7 place de la Gare, BP 70109, 57204 Sarreguemines Cedex, France — www.ionos.fr',
   },
 };
 
