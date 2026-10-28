@@ -1,6 +1,11 @@
 # Réglages Apache pour l'hébergement IONOS (équivalent de public/_redirects pour Netlify).
 RewriteEngine On
 
+# Une seule adresse : https://meissambaye.com (sans www, toujours en HTTPS).
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://meissambaye.com%{REQUEST_URI} [R=301,L,NE]
+
 # Redirections 301 (déplacement définitif, conservé par Google). NE garde le « # » de l'ancre.
 # Page « L'artiste » fusionnée dans Borom Ndeer.
 RewriteRule ^artiste/?$ /borom-ndeer#parcours [R=301,L,NE]

@@ -3,15 +3,15 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
-// Domaine définitif [À CONFIRMER] : surchargé par la variable SITE_URL sur Netlify.
-const SITE_URL = process.env.SITE_URL ?? 'https://meissa-mbaye.netlify.app';
+// Domaine définitif, enregistré chez IONOS (28/10/2026). Peut être surchargé par la variable SITE_URL.
+const SITE_URL = process.env.SITE_URL ?? 'https://meissambaye.com';
 
 export default defineConfig({
   site: SITE_URL,
   // Barre d'outils Astro masquée en développement (elle n'existe jamais en production).
   devToolbar: { enabled: false },
   // L'ancienne page « L'artiste » est fusionnée dans Borom Ndeer (nom d'artiste de Meïssa musicien).
-  // Doublé par public/_redirects pour une vraie redirection 301 sur Netlify.
+  // Doublé par public/.htaccess pour une vraie redirection 301 chez IONOS.
   redirects: {
     '/artiste': '/borom-ndeer#parcours',
     '/en/artiste': '/en/borom-ndeer#parcours',
