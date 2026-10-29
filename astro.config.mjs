@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 // Domaine définitif, enregistré chez IONOS (28/10/2026). Peut être surchargé par la variable SITE_URL.
-const SITE_URL = process.env.SITE_URL ?? 'https://meissambaye.com';
+const SITE_URL = process.env.SITE_URL || 'https://meissambaye.com';
 
 export default defineConfig({
   site: SITE_URL,
