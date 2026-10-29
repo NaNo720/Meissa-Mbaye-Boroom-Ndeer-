@@ -2,8 +2,11 @@
 RewriteEngine On
 
 # Une seule adresse : https://meissambaye.com (sans www, toujours en HTTPS).
-RewriteCond %{HTTPS} off [OR]
-RewriteCond %{HTTP_HOST} ^www\. [NC]
+# Le domaine de test IONOS (….onlinehome.fr) n'est pas redirigé.
+RewriteCond %{HTTP_HOST} ^www\.meissambaye\.com$ [NC]
+RewriteRule ^ https://meissambaye.com%{REQUEST_URI} [R=301,L,NE]
+RewriteCond %{HTTP_HOST} ^meissambaye\.com$ [NC]
+RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://meissambaye.com%{REQUEST_URI} [R=301,L,NE]
 
 # Redirections 301 (déplacement définitif, conservé par Google). NE garde le « # » de l'ancre.
