@@ -20,6 +20,10 @@ RewriteRule ^en/pedagogue/kaay-wox/?$ /en/pedagogue/kaay-wax [R=301,L]
 # Page d'erreur du site.
 ErrorDocument 404 /404.html
 
+# Accents : les pages et fichiers texte sont annoncés en UTF-8.
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .css .js .xml .txt
+
 # Fichiers versionnés par Astro (nom unique à chaque build) : cache d'un an.
 <IfModule mod_headers.c>
   <FilesMatch "\.(js|css|webp|avif|woff2)$">
