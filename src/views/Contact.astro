@@ -277,7 +277,8 @@ const req = `<span class="text-terracotta" aria-hidden="true">*</span>`;
       if (donnees.site_web) return; // robot
       delete donnees.site_web;
 
-      const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+      // En ligne : script PHP de l'hébergement IONOS (public/api/demande.php). En local, pas de PHP : mode démo.
+      const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) || (import.meta.env.PROD ? '/api/demande.php' : '');
       if (!endpoint) {
         afficher(form.dataset.msgDemo!, 'info');
         return;
@@ -291,7 +292,7 @@ const req = `<span class="text-terracotta" aria-hidden="true">*</span>`;
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...donnees, langue: document.documentElement.lang, source: 'site', page: document.referrer }),
         });
-        if (!res.ok) throw new Error(String(res.status));
+        if (!res.ok || !(await res.json().catch(() => null))?.ok) throw new Error(String(res.status));
         form.reset();
         afficher(form.dataset.msgSucces!, 'ok');
       } catch {

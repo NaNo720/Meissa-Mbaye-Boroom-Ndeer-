@@ -13,3 +13,6 @@ medias-sources/
 
 # Réglages locaux de l'assistant
 .claude/settings.local.json
+
+# Limite d'envois du formulaire (créé par public/api/demande.php lors des tests locaux)
+donnees-formulaire/
