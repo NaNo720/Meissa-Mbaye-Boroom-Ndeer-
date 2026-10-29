@@ -87,7 +87,7 @@
   - Bordures `#DCCFBC` · Texte secondaire `#5A4D42`
   - Statuts : nouvelle `#F6E3C0/#6B4A0E` · contactée `#DCDDE6/#1D2650` · devis `#EBD5C8/#7A3215` · confirmée `#D5E5D3/#24502A` · perdue `#E4DED6/#4A4038`
 - Boutons en pilule (`border-radius: 999px`), cartes `border-radius: 8px`, zones tactiles ≥ 44 px.
-- Thème vert (aperçu `?theme=vert`, oct. 2026) : pas de bleu, sauf **Kaay Wax** (carte de la page Pédagogue, page du projet) et les boutons du livre et du lecteur de la page Conteur, en bleu pétrole `#1D6A80` (fond `#DCEBEF`) pour la distinguer de Bokk Baat en vert (Nano, 28/10/2026).
+- **Thème vert = thème du site depuis le 29/10/2026** (Nano ; `data-theme="vert"` sur `<html>`, valeurs dans `src/styles/global.css` : noir `#0B3D30`, scène `#00503C`, fond `#F1F8F5`, sable `#DCEFE8`, accent `#6FCBB0`, Boroom Ndeer `#17785F`, Conteur `#2E5E3E`). Les couleurs ci-dessus restent la base d'origine. Pas de bleu, sauf **Kaay Wax** (carte de la page Pédagogue, page du projet) et les boutons du livre et du lecteur de la page Conteur, en bleu pétrole `#1D6A80` (fond `#DCEBEF`) pour la distinguer de Bokk Baat en vert (Nano, 28/10/2026).
 
 ## 9. Règles à respecter (pour l'IA)
 

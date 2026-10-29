@@ -24,8 +24,8 @@
 }
 
 /*
- * APERÇU TEMPORAIRE du thème vert (option 3, demandé par Nano le 21/10/2026).
- * Actif seulement avec ?theme=vert dans l'adresse (voir Base.astro). À supprimer après décision.
+ * Thème vert : thème du site (proposé le 21/10/2026, adopté par Nano le 29/10/2026).
+ * Activé pour toutes les pages par data-theme="vert" sur <html> (Base.astro) ; les valeurs ci-dessus restent la base.
  */
 :root[data-theme="vert"] {
   --color-noir: #0B3D30;
@@ -45,7 +45,7 @@
 }
 
 /*
- * TEST (Nano, 22/10/2026) : blocs en vert d'eau pâle #DCEFE8 dans le thème vert
+ * Blocs en vert d'eau pâle #DCEFE8 dans le thème vert (Nano, 22/10/2026)
  * (en-tête du Conteur, bandeaux « Programmer » des deux spectacles).
  * Les couleurs sont redéfinies localement : fond clair, textes et boutons foncés pour rester lisibles.
  */

@@ -20,25 +20,15 @@ const titreComplet = slug ? `${title} · Meïssa Mbaye` : title;
 ---
 
 <!doctype html>
-<html lang={lang}>
+<!-- Thème vert : thème du site depuis le 29/10/2026 (Nano). Couleurs dans src/styles/global.css. -->
+<html lang={lang} data-theme="vert">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titreComplet}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- APERÇU TEMPORAIRE : ?theme=vert active le thème vert pour la session, ?theme=normal le retire. À supprimer après décision. -->
-    <script is:inline>
-      (function () {
-        try {
-          var p = new URLSearchParams(location.search).get('theme');
-          if (p === 'vert') sessionStorage.setItem('theme', 'vert');
-          if (p === 'normal') sessionStorage.removeItem('theme');
-          if (sessionStorage.getItem('theme') === 'vert') document.documentElement.dataset.theme = 'vert';
-        } catch (e) {}
-      })();
-    </script>
-    <meta name="theme-color" content="#1C1612" />
+    <meta name="theme-color" content="#0B3D30" />
 
     <link rel="canonical" href={absolu(href(lang, slug))} />
     <link rel="alternate" hreflang="fr" href={absolu(href('fr', slug))} />
