@@ -1,9 +1,9 @@
 # Réglages Apache pour l'hébergement IONOS (équivalent de public/_redirects pour Netlify).
 RewriteEngine On
 
-# Une seule adresse : https://meissambaye.com (sans www, toujours en HTTPS).
+# Une seule adresse : https://meissambaye.com (sans www, toujours en HTTPS ; meissambaye.fr y renvoie).
 # Le domaine de test IONOS (….onlinehome.fr) n'est pas redirigé.
-RewriteCond %{HTTP_HOST} ^www\.meissambaye\.com$ [NC]
+RewriteCond %{HTTP_HOST} ^(www\.meissambaye\.com|(www\.)?meissambaye\.fr)$ [NC]
 RewriteRule ^ https://meissambaye.com%{REQUEST_URI} [R=301,L,NE]
 RewriteCond %{HTTP_HOST} ^meissambaye\.com$ [NC]
 RewriteCond %{HTTPS} !=on
