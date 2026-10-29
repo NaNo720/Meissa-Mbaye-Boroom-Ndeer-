@@ -221,7 +221,8 @@ const btnLivre = (url: string, label: string, classe: string) => ({ url, label, 
     <div class="mt-8 grid gap-4 sm:grid-cols-2">
       <!-- À gauche : photo du duo dans la salle aux murs rouges (Nano, 29/10/2026), cadrée sur les musiciens ;
            à droite : galerie meissa-mbaye-conteur-03 (Institut français du Sénégal) -->
-      <Photo photo={photos.duoGuitaresSalleRouge} lang={lang} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[16/10] w-full rounded-lg object-[50%_62%]" />
+      <!-- Galerie : meissa-mbaye-ateliers-02 (Nano, 29/10/2026) -->
+      <Photo photo={photos.spectacleDuo} lang={lang} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[16/10] w-full rounded-lg" />
       <Photo photo={photos.conteurSceneGenies} lang={lang} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[16/10] w-full rounded-lg" />
     </div>
     <ul class="mt-4 grid gap-4 md:grid-cols-3" role="list">
