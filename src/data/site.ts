@@ -4,7 +4,7 @@
  */
 export const site = {
   nom: 'Meïssa Mbaye',
-  bookingEmail: 'meissambaye28@gmail.com',
+  bookingEmail: 'contact@meissambaye.com', // Boîte IONOS (29/10/2026), transférée vers meissambaye28@gmail.com
   whatsapp: { affichage: '+221 77 706 06 97', numero: '221777060697' },
 
   /** Réseaux sociaux : une icône n'apparaît que si son lien est renseigné. */
@@ -39,13 +39,13 @@ export const site = {
 
   /**
    * Mentions légales (Nano, 28/10/2026) : la structure de Meïssa est l'éditeur du site,
-   * Nano Design en est le concepteur et réalisateur. Les champs vides s'affichent « [À COMPLÉTER] ».
+   * Nano Design en est le concepteur et réalisateur. Les champs vides de la réalisation ne s'affichent pas.
    */
   mentions: {
     editeur: {
       nom: 'Werekaan Institute',
       adresse: 'Cité Keur Gorgui, Dakar, Sénégal',
-      ninea: '007366885',
+      ninea: '006443915', // Confirmé par Nano (29/10/2026)
     },
     directeurPublication: 'Meïssa Mbaye',
     realisation: {

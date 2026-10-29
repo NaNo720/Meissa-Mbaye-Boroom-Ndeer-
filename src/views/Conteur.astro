@@ -65,7 +65,6 @@ const t = {
     ateliersTitre: 'Ateliers et formations',
     ateliersTexte: 'Prolonger le spectacle avec Kaay Wax et la méthode de l’Arbre à Palabre : les élèves deviennent conteurs à leur tour.',
     ateliersLien: 'Voir la page Pédagogue',
-    passCulture: 'Collèges et lycées en France : [mention pass Culture, après vérification du référencement].',
     programmer: 'Programmer le conteur',
   },
   en: {
@@ -106,7 +105,6 @@ const t = {
     ateliersTitre: 'Workshops and training',
     ateliersTexte: 'Extend the show with Kaay Wax and the Palaver Tree method: pupils become storytellers in turn.',
     ateliersLien: 'See the Teacher page',
-    passCulture: 'Secondary schools in France: [pass Culture mention, once the listing is verified].',
     programmer: 'Book the storyteller',
   },
 }[lang];
@@ -243,9 +241,6 @@ const btnLivre = (url: string, label: string, classe: string) => ({ url, label, 
         </a>
       </li>
     </ul>
-    <div class="mt-4 rounded-lg bg-indigo-pale p-4 text-sm">
-      <p set:html={fmt(t.passCulture)} />
-    </div>
     {
       // Masquées tant qu'aucune date n'est annoncée.
       datesAVenir('conteur').length > 0 && (

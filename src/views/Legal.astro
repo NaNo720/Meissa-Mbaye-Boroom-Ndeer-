@@ -13,12 +13,12 @@ const { lang, page } = Astro.props;
 
 const hebergeur = site.mentions.hebergeur || '[À COMPLÉTER]';
 const contact = site.bookingEmail;
-const aCompleter = (v: string) => v || '[À COMPLÉTER]';
 const ed = site.mentions.editeur;
 const rea = site.mentions.realisation;
 const editeurFr = `${ed.nom} — ${ed.adresse} — NINEA ${ed.ninea}.`;
-const realisationFr = `${rea.nom} — ${aCompleter(rea.ville)} — RCCM ${aCompleter(rea.rccm)} — NINEA ${aCompleter(rea.ninea)}.`;
-const realisationContact = rea.contact ? ` Contact : ${rea.contact}` : ' Contact : [À COMPLÉTER].';
+// Seuls les champs renseignés s'affichent (RCCM, NINEA, ville et contact ajoutés plus tard par Nano).
+const realisationFr = [rea.nom, rea.ville, rea.rccm && `RCCM ${rea.rccm}`, rea.ninea && `NINEA ${rea.ninea}`].filter(Boolean).join(' — ') + '.';
+const realisationContact = rea.contact ? ` Contact : ${rea.contact}` : '';
 
 type Section = { titre: string; paragraphes: string[] };
 const contenus: Record<typeof page, Record<Lang, { titre: string; description: string; sections: Section[] }>> = {
