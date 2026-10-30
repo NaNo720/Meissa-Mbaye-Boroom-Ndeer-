@@ -57,7 +57,7 @@ export const site = {
     realisation: {
       nom: 'Nano Design',
       rccm: '', // À compléter
-      ninea: '', // À compléter
+      ninea: '013427358', // Nano, 30/10/2026
       ville: '', // À compléter
       contact: '', // E-mail ou site à afficher, à compléter
     },
