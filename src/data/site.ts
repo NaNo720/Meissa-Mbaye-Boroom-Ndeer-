@@ -58,7 +58,7 @@ export const site = {
       nom: 'Nano Design',
       rccm: '', // À compléter
       ninea: '013427358', // Nano, 30/10/2026
-      ville: '', // À compléter
+      ville: 'Keur Massar, Dakar 17000, Sénégal', // Nano, 30/10/2026
       contact: '', // E-mail ou site à afficher, à compléter
     },
     // Hébergeur choisi par Nano (28/10/2026). Raison sociale et adresse à vérifier sur la facture IONOS.
