@@ -6,6 +6,11 @@ export const site = {
   nom: 'Meïssa Mbaye',
   bookingEmail: 'contact@meissambaye.com', // Boîte IONOS (29/10/2026), transférée vers meissambaye28@gmail.com
   whatsapp: { affichage: '+221 77 706 06 97', numero: '221777060697' },
+  /** Contact de Meïssa en France (Nano, 30/10/2026) : page Contact et mentions légales. */
+  france: {
+    adresse: ['104 ter rue du Faubourg de Roubaix', 'B11', '59800 Lille', 'France'],
+    telephone: { affichage: '+33 6 65 91 15 60', numero: '+33665911560' },
+  },
 
   /** Réseaux sociaux : une icône n'apparaît que si son lien est renseigné. */
   reseaux: {
@@ -44,7 +49,8 @@ export const site = {
   mentions: {
     editeur: {
       nom: 'Werekaan Institute',
-      adresse: 'Cité Keur Gorgui, Dakar, Sénégal',
+      adresse: 'Villa N°174, Sn City, Ndiakhirate, Dakar 10200, Sénégal', // Nano, 30/10/2026
+      site: 'werekaan.com',
       ninea: '006443915', // Confirmé par Nano (29/10/2026)
     },
     directeurPublication: 'Meïssa Mbaye',

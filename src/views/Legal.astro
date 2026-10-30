@@ -15,7 +15,15 @@ const hebergeur = site.mentions.hebergeur || '[À COMPLÉTER]';
 const contact = site.bookingEmail;
 const ed = site.mentions.editeur;
 const rea = site.mentions.realisation;
-const editeurFr = `${ed.nom} — ${ed.adresse} — NINEA ${ed.ninea}.`;
+const editeurFr = `${ed.nom} — ${ed.adresse} — NINEA ${ed.ninea} — ${ed.site}.`;
+const fr = site.france;
+const franceAdresse = `${site.mentions.directeurPublication}, ${fr.adresse.join(', ')} — ${fr.telephone.affichage}`;
+/** Rend cliquables l'e-mail, le site du Werekaan et le téléphone en France. */
+const liens = (html: string) =>
+  html
+    .replace(contact, `<a class="lien" href="${mailtoUrl}">${contact}</a>`)
+    .replace(ed.site, `<a class="lien" href="https://${ed.site}" rel="noopener">${ed.site}</a>`)
+    .replace(fr.telephone.affichage, `<a class="lien whitespace-nowrap" href="tel:${fr.telephone.numero}">${fr.telephone.affichage}</a>`);
 // Seuls les champs renseignés s'affichent (RCCM, NINEA, ville et contact ajoutés plus tard par Nano).
 const realisationFr = [rea.nom, rea.ville, rea.rccm && `RCCM ${rea.rccm}`, rea.ninea && `NINEA ${rea.ninea}`].filter(Boolean).join(' — ') + '.';
 const realisationContact = rea.contact ? ` Contact : ${rea.contact}` : '';
@@ -29,7 +37,12 @@ const contenus: Record<typeof page, Record<Lang, { titre: string; description: s
       sections: [
         {
           titre: 'Éditeur du site',
-          paragraphes: [editeurFr, `Directeur de la publication : ${site.mentions.directeurPublication}.`, `Contact : ${contact}`],
+          paragraphes: [
+            editeurFr,
+            `Directeur de la publication : ${site.mentions.directeurPublication}.`,
+            `Contact : ${contact}`,
+            `Contact en France : ${franceAdresse}.`,
+          ],
         },
         {
           titre: 'Conception et réalisation',
@@ -54,7 +67,12 @@ const contenus: Record<typeof page, Record<Lang, { titre: string; description: s
       sections: [
         {
           titre: 'Publisher',
-          paragraphes: [editeurFr, `Publication director: ${site.mentions.directeurPublication}.`, `Contact: ${contact}`],
+          paragraphes: [
+            editeurFr,
+            `Publication director: ${site.mentions.directeurPublication}.`,
+            `Contact: ${contact}`,
+            `Contact in France: ${franceAdresse}.`,
+          ],
         },
         {
           titre: 'Design and development',
@@ -172,7 +190,7 @@ const maj = lang === 'fr' ? 'Dernière mise à jour : 28 octobre 2026.' : 'Last 
           <section class="border-t border-bordure py-6">
             <h2 class="text-2xl">{s.titre}</h2>
             {s.paragraphes.map((p) => (
-              <p class="mt-3 leading-relaxed" set:html={fmt(p).replace(contact, `<a class="lien" href="${mailtoUrl}">${contact}</a>`)} />
+              <p class="mt-3 leading-relaxed" set:html={liens(fmt(p))} />
             ))}
           </section>
         ))

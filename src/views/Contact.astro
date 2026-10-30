@@ -61,6 +61,7 @@ const t = {
     demo: 'Mode démonstration : le formulaire n’est pas encore relié à l’administration, la demande n’a pas été envoyée. Écrivez-nous directement par e-mail ou WhatsApp.',
     erreur: 'L’envoi n’a pas abouti. Réessayez dans un instant, ou écrivez-nous par e-mail ou WhatsApp.',
     autre: 'Vous préférez écrire directement ?',
+    enFrance: 'En France',
   },
   en: {
     titre: 'Contact and booking',
@@ -112,6 +113,7 @@ const t = {
     demo: 'Demo mode: the form is not yet connected to the admin, so your request was not sent. Please write to us directly by email or WhatsApp.',
     erreur: 'Sending failed. Please try again shortly, or write to us by email or WhatsApp.',
     autre: 'Prefer to write directly?',
+    enFrance: 'In France',
   },
 }[lang];
 
@@ -245,6 +247,14 @@ const req = `<span class="text-terracotta" aria-hidden="true">*</span>`;
             </a>
           </li>
         </ul>
+        <div class="mt-6 border-t border-bordure pt-5 text-sm">
+          <h3 class="font-sans text-sm font-semibold">{t.enFrance}</h3>
+          <address class="mt-2 not-italic leading-relaxed">
+            Meïssa Mbaye<br />
+            {site.france.adresse.map((l, i) => <Fragment>{l}{i < site.france.adresse.length - 1 && <br />}</Fragment>)}
+          </address>
+          <a href={`tel:${site.france.telephone.numero}`} class="lien mt-2 inline-block py-2">{site.france.telephone.affichage}</a>
+        </div>
       </div>
     </aside>
   </div>
