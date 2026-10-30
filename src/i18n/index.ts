@@ -58,6 +58,7 @@ export const ui = {
     mentions: { fr: 'Mentions légales', en: 'Legal notice' },
     confidentialite: { fr: 'Confidentialité', en: 'Privacy' },
     realisation: { fr: 'Site réalisé par', en: 'Website by' },
+    france: { fr: 'En France', en: 'In France' },
   },
   dates: {
     titre: { fr: 'Prochaines dates', en: 'Upcoming dates' },

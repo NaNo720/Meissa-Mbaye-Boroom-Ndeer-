@@ -45,6 +45,12 @@ const f = ui.footer;
         <li><a class="inline-block break-all py-1 text-creme/80 hover:text-creme" href={mailtoUrl}>{site.bookingEmail}</a></li>
         <li><a class="lien inline-block py-1 text-or" href={whatsappUrl} target="_blank" rel="noopener">WhatsApp {site.whatsapp.affichage}</a></li>
       </ul>
+      <p class="mt-4 text-sm font-semibold">{f.france[lang]}</p>
+      <address class="mt-1 text-sm not-italic leading-relaxed text-creme/80">
+        {site.france.adresse.slice(0, 2).join(', ')}<br />
+        {site.france.adresse.slice(2).join(', ')}<br />
+        <a class="inline-block py-1 hover:text-creme" href={`tel:${site.france.telephone.numero}`}>{site.france.telephone.affichage}</a>
+      </address>
       <a href={href(lang, 'contact')} class="btn btn-or mt-4">{f.reserverSpectacle[lang]}</a>
     </div>
   </div>
@@ -52,7 +58,7 @@ const f = ui.footer;
   <div class="border-t border-creme/10">
     <div class="container-site flex flex-col gap-3 py-5 text-xs text-creme/70 sm:flex-row sm:items-center sm:justify-between">
       <p>
-        © {new Date().getFullYear()} Meïssa Mbaye · Werekaan Institute ·
+        © {new Date().getFullYear()} Meïssa Mbaye · Werekaan Institute ·{' '}
         <a class="hover:text-creme" href={href(lang, 'mentions-legales')}>{f.realisation[lang]} {site.mentions.realisation.nom}</a>
       </p>
       <ul class="flex flex-wrap items-center gap-x-5 gap-y-1" role="list">
