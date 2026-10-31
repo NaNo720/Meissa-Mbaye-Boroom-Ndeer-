@@ -11,8 +11,10 @@ interface Props {
   description: string;
   /** Image de partage (Open Graph), chemin absolu ou relatif au site. */
   image?: string;
+  /** Page à ne pas indexer (404) : ni canonique ni hreflang. */
+  noindex?: boolean;
 }
-const { lang, title, description, image } = Astro.props;
+const { lang, title, description, image, noindex = false } = Astro.props;
 
 const slug = slugOf(Astro.url.pathname);
 const absolu = (path: string) => new URL(path, Astro.site).href;
@@ -30,10 +32,18 @@ const titreComplet = slug ? `${title} · Meïssa Mbaye` : title;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#0B3D30" />
 
-    <link rel="canonical" href={absolu(href(lang, slug))} />
-    <link rel="alternate" hreflang="fr" href={absolu(href('fr', slug))} />
-    <link rel="alternate" hreflang="en" href={absolu(href('en', slug))} />
-    <link rel="alternate" hreflang="x-default" href={absolu(href('fr', slug))} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex" />
+      ) : (
+        <>
+          <link rel="canonical" href={absolu(href(lang, slug))} />
+          <link rel="alternate" hreflang="fr" href={absolu(href('fr', slug))} />
+          <link rel="alternate" hreflang="en" href={absolu(href('en', slug))} />
+          <link rel="alternate" hreflang="x-default" href={absolu(href('fr', slug))} />
+        </>
+      )
+    }
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
